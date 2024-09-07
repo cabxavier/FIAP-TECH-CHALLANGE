@@ -2,7 +2,6 @@
 {
     public class ContatoRegiao : EntityBase
     {
-        public int IdContatoRegiao { get; set; }
         public int IdContato {  get; set; }
         public int IdRegiao { get; set; }
 

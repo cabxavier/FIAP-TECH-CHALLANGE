@@ -1,3 +1,4 @@
+using CORE.Repository;
 using INFRASTRUCTURE.Repository;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +20,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(configuration.GetConnectionString("ConnectionString"));
 
 }, ServiceLifetime.Scoped);
+
+builder.Services.AddScoped<IContatoRepository, ContatoRepository>();
+builder.Services.AddScoped<IRegiaoRepository, RegiaoRepository>();
+builder.Services.AddScoped<IContatoRegiaoRepository, ContatoRegiaoRepository>();
 
 var app = builder.Build();
 

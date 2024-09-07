@@ -24,10 +24,10 @@ namespace INFRASTRUCTURE.Migrations
 
             modelBuilder.Entity("CORE.Entity.Contato", b =>
                 {
-                    b.Property<int>("IdContato")
+                    b.Property<int>("Id")
                         .HasColumnType("Int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdContato"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("DataCriacao")
                         .HasColumnType("DateTime");
@@ -44,7 +44,7 @@ namespace INFRASTRUCTURE.Migrations
                         .IsRequired()
                         .HasColumnType("VarChar(11)");
 
-                    b.HasKey("IdContato");
+                    b.HasKey("Id");
 
                     b.HasIndex("Email")
                         .IsUnique();
@@ -57,12 +57,12 @@ namespace INFRASTRUCTURE.Migrations
 
             modelBuilder.Entity("CORE.Entity.ContatoRegiao", b =>
                 {
-                    b.Property<int>("IdContatoRegiao")
+                    b.Property<int>("Id")
                         .HasColumnType("Int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdContatoRegiao"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ContatoIdContato")
+                    b.Property<int>("ContatoId")
                         .HasColumnType("Int");
 
                     b.Property<DateTime>("DataCriacao")
@@ -74,14 +74,14 @@ namespace INFRASTRUCTURE.Migrations
                     b.Property<int>("IdRegiao")
                         .HasColumnType("Int");
 
-                    b.Property<int?>("RegiaoIdRegiao")
+                    b.Property<int>("RegiaoId")
                         .HasColumnType("Int");
 
-                    b.HasKey("IdContatoRegiao");
+                    b.HasKey("Id");
 
-                    b.HasIndex("ContatoIdContato");
+                    b.HasIndex("ContatoId");
 
-                    b.HasIndex("RegiaoIdRegiao");
+                    b.HasIndex("RegiaoId");
 
                     b.HasIndex("IdContato", "IdRegiao");
 
@@ -90,10 +90,10 @@ namespace INFRASTRUCTURE.Migrations
 
             modelBuilder.Entity("CORE.Entity.Regiao", b =>
                 {
-                    b.Property<int>("IdRegiao")
+                    b.Property<int>("Id")
                         .HasColumnType("Int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdRegiao"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("DataCriacao")
                         .HasColumnType("DateTime");
@@ -101,7 +101,7 @@ namespace INFRASTRUCTURE.Migrations
                     b.Property<int>("Ddd")
                         .HasColumnType("Int");
 
-                    b.HasKey("IdRegiao");
+                    b.HasKey("Id");
 
                     b.HasIndex("Ddd")
                         .IsUnique();
@@ -113,13 +113,15 @@ namespace INFRASTRUCTURE.Migrations
                 {
                     b.HasOne("CORE.Entity.Contato", "Contato")
                         .WithMany("ContatosRegioes")
-                        .HasForeignKey("ContatoIdContato")
+                        .HasForeignKey("ContatoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("CORE.Entity.Regiao", "Regiao")
                         .WithMany("ContatosRegioes")
-                        .HasForeignKey("RegiaoIdRegiao");
+                        .HasForeignKey("RegiaoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Contato");
 
