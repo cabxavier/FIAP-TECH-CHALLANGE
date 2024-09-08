@@ -1,5 +1,6 @@
 ﻿using CORE.Entity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace INFRASTRUCTURE.Repository
 {
@@ -7,7 +8,15 @@ namespace INFRASTRUCTURE.Repository
     {
         private readonly string connectionString;
 
-        public ApplicationDbContext() { }
+        public ApplicationDbContext()
+        {
+            IConfiguration configuration = new ConfigurationBuilder()
+                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                .AddJsonFile("appsettings.json")
+                .Build();
+
+            this.connectionString = configuration.GetConnectionString("ConnectionString");
+        }
 
         public ApplicationDbContext(string connectionString)
         {

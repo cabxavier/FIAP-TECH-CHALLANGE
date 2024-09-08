@@ -10,7 +10,7 @@ namespace INFRASTRUCTURE.Repository.Configuration
         {
             builder.ToTable("ContatoRegiao");
             builder.HasKey(p => p.Id);
-            builder.Property(p => p.Id).HasColumnType("Int").ValueGeneratedNever().UseIdentityColumn();
+            builder.Property(p => p.Id).HasColumnType("Int").UseIdentityColumn();
             builder.Property(p => p.IdContato).HasColumnType("Int").IsRequired();
             builder.Property(p => p.IdRegiao).HasColumnType("Int").IsRequired();
             builder.Property(p => p.DataCriacao).HasColumnType("DateTime").IsRequired();
