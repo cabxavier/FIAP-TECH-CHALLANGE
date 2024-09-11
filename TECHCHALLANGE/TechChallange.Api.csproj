@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\INFRASTRUCTURE\INFRASTRUCTURE.csproj" />
+    <ProjectReference Include="..\INFRASTRUCTURE\TechChallange.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
