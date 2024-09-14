@@ -25,7 +25,7 @@ namespace INFRASTRUCTURE.Repository
 
         public DbSet<Contato> Contato { get; set; }
         public DbSet<Regiao> Regiao { get; set; }
-        public DbSet<ContatoRegiao> RegiaoRegiao { get; set; }
+        public DbSet<ContatoRegiao> ContatoRegiao { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

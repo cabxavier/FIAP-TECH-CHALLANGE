@@ -4,6 +4,6 @@
     {
         public required int Ddd { get; set; }
 
-        public ICollection<ContatoRegiao>? ContatosRegioes { get; set; } = new List<ContatoRegiao>();
+        public virtual ICollection<ContatoRegiao> ContatosRegioes { get; set; }
     }
 }

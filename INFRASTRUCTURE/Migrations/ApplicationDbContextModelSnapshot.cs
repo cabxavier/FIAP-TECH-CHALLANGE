@@ -70,12 +70,6 @@ namespace INFRASTRUCTURE.Migrations
                     b.Property<DateTime>("DataCriacao")
                         .HasColumnType("DateTime");
 
-                    b.Property<int>("IdContato")
-                        .HasColumnType("Int");
-
-                    b.Property<int>("IdRegiao")
-                        .HasColumnType("Int");
-
                     b.Property<int>("RegiaoId")
                         .HasColumnType("Int");
 
@@ -84,8 +78,6 @@ namespace INFRASTRUCTURE.Migrations
                     b.HasIndex("ContatoId");
 
                     b.HasIndex("RegiaoId");
-
-                    b.HasIndex("IdContato", "IdRegiao");
 
                     b.ToTable("ContatoRegiao", (string)null);
                 });

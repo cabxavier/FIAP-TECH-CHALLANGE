@@ -47,8 +47,6 @@ namespace INFRASTRUCTURE.Migrations
                 {
                     Id = table.Column<int>(type: "Int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    IdContato = table.Column<int>(type: "Int", nullable: false),
-                    IdRegiao = table.Column<int>(type: "Int", nullable: false),
                     ContatoId = table.Column<int>(type: "Int", nullable: false),
                     RegiaoId = table.Column<int>(type: "Int", nullable: false),
                     DataCriacao = table.Column<DateTime>(type: "DateTime", nullable: false)
@@ -86,11 +84,6 @@ namespace INFRASTRUCTURE.Migrations
                 name: "IX_ContatoRegiao_ContatoId",
                 table: "ContatoRegiao",
                 column: "ContatoId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ContatoRegiao_IdContato_IdRegiao",
-                table: "ContatoRegiao",
-                columns: new[] { "IdContato", "IdRegiao" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_ContatoRegiao_RegiaoId",

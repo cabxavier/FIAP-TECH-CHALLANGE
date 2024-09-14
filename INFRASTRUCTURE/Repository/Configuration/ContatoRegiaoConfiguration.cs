@@ -11,8 +11,8 @@ namespace INFRASTRUCTURE.Repository.Configuration
             builder.ToTable("ContatoRegiao");
             builder.HasKey(p => p.Id);
             builder.Property(p => p.Id).HasColumnType("Int").UseIdentityColumn();
-            builder.Property(p => p.IdContato).HasColumnType("Int").IsRequired();
-            builder.Property(p => p.IdRegiao).HasColumnType("Int").IsRequired();
+            builder.Property(p => p.ContatoId).HasColumnType("Int").IsRequired();
+            builder.Property(p => p.RegiaoId).HasColumnType("Int").IsRequired();
             builder.Property(p => p.DataCriacao).HasColumnType("DateTime").IsRequired();
 
             builder.HasOne(p => p.Contato)
@@ -23,7 +23,8 @@ namespace INFRASTRUCTURE.Repository.Configuration
             .WithMany(c => c.ContatosRegioes)
             .HasPrincipalKey(c => c.Id);
 
-            builder.HasIndex(p => new { p.IdContato, p.IdRegiao });
+            builder.HasIndex(p => new { p.ContatoId });
+            builder.HasIndex(p => new { p.RegiaoId });
         }
     }
 }
