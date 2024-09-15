@@ -40,7 +40,7 @@ namespace TECHCHALLANGEAPI.Controllers
             {
                 return BadRequest(ex.Message);
             }
-        }
+        }       
 
         [HttpPost]
         public IActionResult Post([FromBody] RegiaoInput RegiaoInput)

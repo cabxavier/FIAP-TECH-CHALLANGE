@@ -42,6 +42,19 @@ namespace TECHCHALLANGEAPI.Controllers
             }
         }
 
+        [HttpGet("ddd/{Ddd:int}")]
+        public IActionResult ObterContatoRegiaoPorDddGet([FromRoute] int Ddd)
+        {
+            try
+            {
+                return Ok(this.contatoRepository.ObterContatoRegiaoPorDdd(Ddd));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPost]
         public IActionResult Post([FromBody] ContatoInput ContatoInput)
         {

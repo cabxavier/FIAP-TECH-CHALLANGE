@@ -1,4 +1,5 @@
-﻿using CORE.Entity;
+﻿using CORE.Dto;
+using CORE.Entity;
 using CORE.Repository;
 
 namespace INFRASTRUCTURE.Repository
