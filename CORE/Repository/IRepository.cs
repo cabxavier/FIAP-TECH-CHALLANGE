@@ -4,10 +4,10 @@ namespace CORE.Repository
 {
     public interface IRepository<T> where T : EntityBase
     {
-        IList<T> ObterTodos();
-        T ObterPorId(int id);
-        void Cadastrar(T entidade);
-        void Alterar(T entidade);
-        void Deletar(int id);
+        Task<IList<T>> GetAllAsync();
+        Task<T> GetByIdAsync(int id);
+        Task AddAsync(T entidade);
+        Task UpdateAsync(T entidade);
+        Task DeleteAsync(int id);
     }
 }

@@ -1,7 +1,9 @@
 ﻿using CORE.Entity;
 using CORE.Input;
 using CORE.Repository;
+using CORE.Validator;
 using Microsoft.AspNetCore.Mvc;
+using FluentValidation;
 
 namespace TECHCHALLANGEAPI.Controllers
 {
@@ -10,53 +12,55 @@ namespace TECHCHALLANGEAPI.Controllers
     public class ContatoController : ControllerBase
     {
         private readonly IContatoRepository contatoRepository;
+        private readonly ContatoValidator contatoValidator;
 
-        public ContatoController(IContatoRepository contatoRepository)
+        public ContatoController(IContatoRepository contatoRepository, ContatoValidator contatoValidator)
         {
             this.contatoRepository = contatoRepository;
+            this.contatoValidator = contatoValidator;
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
             try
             {
-                return Ok(this.contatoRepository.ObterTodos());
+                return Ok((await this.contatoRepository.GetAllAsync()));
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Error:  {ex.Message}.");
             }
         }
 
         [HttpGet("{Id:int}")]
-        public IActionResult Get([FromRoute] int Id)
+        public async Task<IActionResult> Get([FromRoute] int Id)
         {
             try
             {
-                return Ok(this.contatoRepository.ObterPorId(Id));
+                return Ok((await this.contatoRepository.GetByIdAsync(Id)));
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Error:  {ex.Message}.");
             }
         }
 
-        [HttpGet("ddd/{Ddd:int}")]
-        public IActionResult ObterContatoRegiaoPorDddGet([FromRoute] int Ddd)
+        [HttpGet("ddd/{Ddd}")]
+        public async Task<IActionResult> ObterContatoRegiaoPorDddGet([FromRoute] string Ddd)
         {
             try
             {
-                return Ok(this.contatoRepository.ObterContatoRegiaoPorDdd(Ddd));
+                return Ok((await this.contatoRepository.ObterContatoRegiaoPorDdd(Ddd)));
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Error:  {ex.Message}.");
             }
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] ContatoInput ContatoInput)
+        public async Task<IActionResult> Post([FromBody] ContatoInput ContatoInput)
         {
             try
             {
@@ -67,26 +71,38 @@ namespace TECHCHALLANGEAPI.Controllers
                     Email = ContatoInput.Email
                 };
 
-                this.contatoRepository.Cadastrar(contato);
+                var contatoValidatorResult = await this.contatoValidator.ValidateAsync(contato);
+
+                if (!contatoValidatorResult.IsValid)
+                {
+                    foreach (var failure in contatoValidatorResult.Errors)
+                    {
+                        return BadRequest($"Error: {failure.ErrorMessage}");
+                    }
+
+                    throw new ValidationException("Não foi possível validar o contato.");
+                }
+
+                await this.contatoRepository.AddAsync(contato);
 
                 return Ok();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Error:  {ex.Message}.");
             }
         }
 
         [HttpPut]
-        public IActionResult Put([FromBody] ContatoUpdateInput ContatoUpdateInput)
+        public async Task<IActionResult> Put([FromBody] ContatoUpdateInput ContatoUpdateInput)
         {
             try
             {
-                var contato = this.contatoRepository.ObterPorId(ContatoUpdateInput.Id);
+                var contato = await this.contatoRepository.GetByIdAsync(ContatoUpdateInput.Id);
 
                 if (contato is null)
                 {
-                    return BadRequest("Não foi possível obter as informações do contato");
+                    return BadRequest("Não foi possível obter as informações do contato.");
                 }
 
                 contato.Id = ContatoUpdateInput.Id;
@@ -94,35 +110,47 @@ namespace TECHCHALLANGEAPI.Controllers
                 contato.Telefone = ContatoUpdateInput.Telefone;
                 contato.Email = ContatoUpdateInput.Email;
 
-                this.contatoRepository.Alterar(contato);
+                var contatoValidatorResult = await this.contatoValidator.ValidateAsync(contato);
+
+                if (!contatoValidatorResult.IsValid)
+                {
+                    foreach (var failure in contatoValidatorResult.Errors)
+                    {
+                        return BadRequest($"Error: {failure.ErrorMessage}");
+                    }
+
+                    throw new ValidationException("Não foi possível validar o contato.");
+                }
+
+                await this.contatoRepository.UpdateAsync(contato);
 
                 return Ok();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Error:  {ex.Message}.");
             }
         }
 
         [HttpDelete("{Id:int}")]
-        public IActionResult Delete([FromRoute] int Id)
+        public async Task<IActionResult> Delete([FromRoute] int Id)
         {
             try
             {
-                var contato = this.contatoRepository.ObterPorId(Id);
+                var contato = await this.contatoRepository.GetByIdAsync(Id);
 
                 if (contato is null)
                 {
-                    return BadRequest("Não foi possível obter as informações do contato");
+                    return BadRequest("Não foi possível obter as informações do contato.");
                 }
 
-                this.contatoRepository.Deletar(contato.Id);
+                await this.contatoRepository.DeleteAsync(contato.Id);
 
                 return Ok();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Error:  {ex.Message}.");
             }
         }
     }

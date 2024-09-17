@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace INFRASTRUCTURE.Migrations
 {
     /// <inheritdoc />
-    public partial class PrimeiraMigracao : Migration
+    public partial class PrimeiraMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,7 +33,7 @@ namespace INFRASTRUCTURE.Migrations
                 {
                     Id = table.Column<int>(type: "Int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Ddd = table.Column<int>(type: "Int", nullable: false),
+                    Ddd = table.Column<string>(type: "VarChar(2)", nullable: false),
                     DataCriacao = table.Column<DateTime>(type: "DateTime", nullable: false)
                 },
                 constraints: table =>

@@ -93,8 +93,9 @@ namespace INFRASTRUCTURE.Migrations
                     b.Property<DateTime>("DataCriacao")
                         .HasColumnType("DateTime");
 
-                    b.Property<int>("Ddd")
-                        .HasColumnType("Int");
+                    b.Property<string>("Ddd")
+                        .IsRequired()
+                        .HasColumnType("VarChar(2)");
 
                     b.HasKey("Id");
 

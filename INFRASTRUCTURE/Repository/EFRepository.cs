@@ -15,29 +15,34 @@ namespace INFRASTRUCTURE.Repository
             this.dbSet = this.context.Set<T>();
         }
 
-        public void Alterar(T entidade)
-        {
-            this.dbSet.Update(entidade);
-            this.context.SaveChanges();
-        }
+        public async Task<IList<T>> GetAllAsync()
+            => await this.dbSet.ToListAsync();
 
-        public void Cadastrar(T entidade)
+        public async Task<T> GetByIdAsync(int id)
+            => await this.dbSet.FirstOrDefaultAsync(entity => entity.Id == id);
+
+        public async Task AddAsync(T entidade)
         {
             entidade.DataCriacao = DateTime.Now;
             this.dbSet.Add(entidade);
-            this.context.SaveChanges();
+            await this.context.SaveChangesAsync();
         }
 
-        public void Deletar(int id)
+        public async Task UpdateAsync(T entidade)
         {
-            this.dbSet.Remove(this.ObterPorId(id));
-            this.context.SaveChanges();
+            this.dbSet.Update(entidade);
+            await this.context.SaveChangesAsync();
         }
 
-        public T ObterPorId(int id)
-            => this.dbSet.FirstOrDefault(entity => entity.Id == id);
+        public async Task DeleteAsync(int id)
+        {
+            var t = await this.GetByIdAsync(id);
 
-        public IList<T> ObterTodos()
-            => this.dbSet.ToList();
+            if (t is not null)
+            {
+                this.dbSet.Remove(t);
+                await this.context.SaveChangesAsync();
+            }
+        }
     }
 }

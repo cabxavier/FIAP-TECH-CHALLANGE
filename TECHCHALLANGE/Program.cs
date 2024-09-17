@@ -1,4 +1,5 @@
 using CORE.Repository;
+using CORE.Validator;
 using INFRASTRUCTURE.Repository;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +25,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<IContatoRepository, ContatoRepository>();
 builder.Services.AddScoped<IRegiaoRepository, RegiaoRepository>();
 builder.Services.AddScoped<IContatoRegiaoRepository, ContatoRegiaoRepository>();
+builder.Services.AddScoped<ContatoValidator>();
+builder.Services.AddScoped<RegiaoValidator>();
+builder.Services.AddScoped<ContatoRegiaoValidator>();
 
 var app = builder.Build();
 

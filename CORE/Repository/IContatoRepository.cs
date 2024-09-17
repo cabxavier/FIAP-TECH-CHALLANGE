@@ -5,6 +5,6 @@ namespace CORE.Repository
 {
     public interface IContatoRepository : IRepository<Contato>
     {
-        IList<RegiaoDto> ObterContatoRegiaoPorDdd(int Ddd);
+       Task <IList<RegiaoDto>> ObterContatoRegiaoPorDdd(string Ddd);
     }
 }

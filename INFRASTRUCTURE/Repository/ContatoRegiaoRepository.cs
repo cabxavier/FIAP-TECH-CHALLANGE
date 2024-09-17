@@ -1,6 +1,7 @@
 ﻿using CORE.Dto;
 using CORE.Entity;
 using CORE.Repository;
+using Microsoft.EntityFrameworkCore;
 
 namespace INFRASTRUCTURE.Repository
 {
@@ -10,10 +11,10 @@ namespace INFRASTRUCTURE.Repository
         {
         }
 
-        public IList<ContatoRegiaoDto> ObterContatoRegiaoTodos()
+        public async Task<IList<ContatoRegiaoDto>> ObterContatoRegiaoTodos()
         {
             var listContatoRegiaoDto = new List<ContatoRegiaoDto>();
-            var listContatoRegiao = this.context.ContatoRegiao.ToList();
+            var listContatoRegiao =  await this.context.ContatoRegiao.ToListAsync();
 
             if ((listContatoRegiao is null ? 0 : listContatoRegiao.Count) > 0)
             {
@@ -21,8 +22,8 @@ namespace INFRASTRUCTURE.Repository
                 {
                     var contatoRegiao = listContatoRegiao[i];
 
-                    var contato = this.context.Contato.FirstOrDefault(p => p.Id == contatoRegiao.ContatoId);
-                    var regiao = this.context.Regiao.FirstOrDefault(p => p.Id == contatoRegiao.RegiaoId);
+                    var contato = await this.context.Contato.FirstOrDefaultAsync(p => p.Id == contatoRegiao.ContatoId);
+                    var regiao = await this.context.Regiao.FirstOrDefaultAsync(p => p.Id == contatoRegiao.RegiaoId);
 
                     var contatoRegiaoDto = new ContatoRegiaoDto()
                     {
@@ -53,14 +54,14 @@ namespace INFRASTRUCTURE.Repository
             return listContatoRegiaoDto;
         }
 
-        public ContatoRegiaoDto ObterContatoRegiaoTodosPorId(int id)
+        public async Task< ContatoRegiaoDto> ObterContatoRegiaoTodosPorId(int id)
         {
-            var contatoRegiao = this.context.ContatoRegiao
-                .FirstOrDefault(p => p.Id == id)
+            var contatoRegiao = await this.context.ContatoRegiao
+                .FirstOrDefaultAsync(p => p.Id == id)
                 ?? throw new Exception("Esse contato região não existe");
 
-            var contato = this.context.Contato.FirstOrDefault(p => p.Id == contatoRegiao.ContatoId);
-            var regiao = this.context.Regiao.FirstOrDefault(p => p.Id == contatoRegiao.RegiaoId);
+            var contato = await this.context.Contato.FirstOrDefaultAsync(p => p.Id == contatoRegiao.ContatoId);
+            var regiao = await this.context.Regiao.FirstOrDefaultAsync(p => p.Id == contatoRegiao.RegiaoId);
 
             return new ContatoRegiaoDto()
             {

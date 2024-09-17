@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace INFRASTRUCTURE.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240914155005_PrimeiraMigracao")]
-    partial class PrimeiraMigracao
+    [Migration("20240917190504_PrimeiraMigration")]
+    partial class PrimeiraMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -96,8 +96,9 @@ namespace INFRASTRUCTURE.Migrations
                     b.Property<DateTime>("DataCriacao")
                         .HasColumnType("DateTime");
 
-                    b.Property<int>("Ddd")
-                        .HasColumnType("Int");
+                    b.Property<string>("Ddd")
+                        .IsRequired()
+                        .HasColumnType("VarChar(2)");
 
                     b.HasKey("Id");
 

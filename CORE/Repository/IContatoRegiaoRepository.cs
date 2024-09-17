@@ -5,7 +5,7 @@ namespace CORE.Repository
 {
     public interface IContatoRegiaoRepository : IRepository<ContatoRegiao>
     {
-        IList<ContatoRegiaoDto> ObterContatoRegiaoTodos();
-        ContatoRegiaoDto ObterContatoRegiaoTodosPorId(int id);
+        Task<IList<ContatoRegiaoDto>> ObterContatoRegiaoTodos();
+        Task<ContatoRegiaoDto> ObterContatoRegiaoTodosPorId(int id);
     }
 }

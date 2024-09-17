@@ -2,6 +2,6 @@
 {
     public class RegiaoInput
     {
-        public required int Ddd { get; set; }
+        public required string Ddd { get; set; }
     }
 }

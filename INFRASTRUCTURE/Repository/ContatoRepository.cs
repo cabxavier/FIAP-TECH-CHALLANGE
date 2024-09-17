@@ -1,6 +1,7 @@
 ﻿using CORE.Dto;
 using CORE.Entity;
 using CORE.Repository;
+using Microsoft.EntityFrameworkCore;
 
 namespace INFRASTRUCTURE.Repository
 {
@@ -10,14 +11,14 @@ namespace INFRASTRUCTURE.Repository
         {
         }
 
-        public IList<RegiaoDto> ObterContatoRegiaoPorDdd(int Ddd)
+        public async Task<IList<RegiaoDto>> ObterContatoRegiaoPorDdd(string Ddd)
         {
             var listaRegiao = new List<RegiaoDto>();
 
-            var lista = (from p in this.context.ContatoRegiao.ToList()
-                         join c in this.context.Contato.ToList() on p.ContatoId equals c.Id
-                         join r in this.context.Regiao.ToList() on p.RegiaoId equals r.Id
-                         where r.Ddd == Ddd
+            var lista = (from p in await this.context.ContatoRegiao.ToListAsync()
+                         join c in await this.context.Contato.ToListAsync() on p.ContatoId equals c.Id
+                         join r in await this.context.Regiao.ToListAsync() on p.RegiaoId equals r.Id
+                         where r.Ddd.Equals(Ddd)
                          select new
                          {
                              r.Id,

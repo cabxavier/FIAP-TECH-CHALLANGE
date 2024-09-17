@@ -1,6 +1,8 @@
 ﻿using CORE.Entity;
 using CORE.Input;
 using CORE.Repository;
+using CORE.Validator;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace TECHCHALLANGEAPI.Controllers
@@ -10,40 +12,42 @@ namespace TECHCHALLANGEAPI.Controllers
     public class RegiaoController : ControllerBase
     {
         private readonly IRegiaoRepository regiaoRepository;
+        private readonly RegiaoValidator regiaoValidator;
 
-        public RegiaoController(IRegiaoRepository regiaoRepository)
+        public RegiaoController(IRegiaoRepository regiaoRepository, RegiaoValidator regiaoValidator)
         {
             this.regiaoRepository = regiaoRepository;
+            this.regiaoValidator = regiaoValidator;
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
             try
             {
-                return Ok(this.regiaoRepository.ObterTodos());
+                return Ok((await this.regiaoRepository.GetAllAsync()));
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Error:  {ex.Message}.");
             }
         }
 
         [HttpGet("{Id:int}")]
-        public IActionResult Get([FromRoute] int Id)
+        public async Task<IActionResult> Get([FromRoute] int Id)
         {
             try
             {
-                return Ok(this.regiaoRepository.ObterPorId(Id));
+                return Ok((await this.regiaoRepository.GetByIdAsync(Id)));
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Error:  {ex.Message}.");
             }
-        }       
+        }
 
         [HttpPost]
-        public IActionResult Post([FromBody] RegiaoInput RegiaoInput)
+        public async Task<IActionResult> Post([FromBody] RegiaoInput RegiaoInput)
         {
             try
             {
@@ -52,60 +56,84 @@ namespace TECHCHALLANGEAPI.Controllers
                     Ddd = RegiaoInput.Ddd
                 };
 
-                this.regiaoRepository.Cadastrar(regiao);
+                var regiaoValidatorResult = await this.regiaoValidator.ValidateAsync(regiao);
+
+                if (!regiaoValidatorResult.IsValid)
+                {
+                    foreach (var failure in regiaoValidatorResult.Errors)
+                    {
+                        return BadRequest($"Error: {failure.ErrorMessage}");
+                    }
+
+                    throw new ValidationException("Não foi possível validar a região.");
+                }
+
+                await this.regiaoRepository.AddAsync(regiao);
 
                 return Ok();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Error:  {ex.Message}.");
             }
         }
 
         [HttpPut]
-        public IActionResult Put([FromBody] RegiaoUpdateInput RegiaoUpdateInput)
+        public async Task<IActionResult> Put([FromBody] RegiaoUpdateInput RegiaoUpdateInput)
         {
             try
             {
-                var regiao = this.regiaoRepository.ObterPorId(RegiaoUpdateInput.Id);
+                var regiao = await this.regiaoRepository.GetByIdAsync(RegiaoUpdateInput.Id);
 
                 if (regiao is null)
                 {
-                    return BadRequest("Não foi possível obter as informações da região");
+                    return BadRequest("Não foi possível obter as informações da região.");
                 }
 
                 regiao.Id = RegiaoUpdateInput.Id;
                 regiao.Ddd = RegiaoUpdateInput.Ddd;
 
-                this.regiaoRepository.Alterar(regiao);
+                var regiaoValidatorResult = await this.regiaoValidator.ValidateAsync(regiao);
+
+                if (!regiaoValidatorResult.IsValid)
+                {
+                    foreach (var failure in regiaoValidatorResult.Errors)
+                    {
+                        return BadRequest($"Error: {failure.ErrorMessage}");
+                    }
+
+                    throw new ValidationException("Não foi possível validar a região.");
+                }
+
+                await this.regiaoRepository.UpdateAsync(regiao);
 
                 return Ok();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Error:  {ex.Message}");
             }
         }
 
         [HttpDelete("{Id:int}")]
-        public IActionResult Delete([FromRoute] int Id)
+        public async Task<IActionResult> Delete([FromRoute] int Id)
         {
             try
             {
-                var regiao = this.regiaoRepository.ObterPorId(Id);
+                var regiao = await this.regiaoRepository.GetByIdAsync(Id);
 
                 if (regiao is null)
                 {
-                    return BadRequest("Não foi possível obter as informações da região");
+                    return BadRequest("Não foi possível obter as informações da região.");
                 }
 
-                this.regiaoRepository.Deletar(regiao.Id);
+                await this.regiaoRepository.DeleteAsync(regiao.Id);
 
                 return Ok();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"Error:  {ex.Message}.");
             }
         }
     }

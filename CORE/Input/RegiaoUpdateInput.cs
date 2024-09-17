@@ -3,6 +3,6 @@
     public class RegiaoUpdateInput
     {
         public int Id {  get; set; }
-        public required int Ddd { get; set; }
+        public required string Ddd { get; set; }
     }
 }
