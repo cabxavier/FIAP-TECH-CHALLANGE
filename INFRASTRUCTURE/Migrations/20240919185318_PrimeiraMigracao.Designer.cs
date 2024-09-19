@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace INFRASTRUCTURE.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240917190504_PrimeiraMigration")]
-    partial class PrimeiraMigration
+    [Migration("20240919185318_PrimeiraMigracao")]
+    partial class PrimeiraMigracao
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -42,7 +42,7 @@ namespace INFRASTRUCTURE.Migrations
 
                     b.Property<string>("Nome")
                         .IsRequired()
-                        .HasColumnType("VarChar(100)");
+                        .HasColumnType("VarChar(200)");
 
                     b.Property<string>("Telefone")
                         .IsRequired()

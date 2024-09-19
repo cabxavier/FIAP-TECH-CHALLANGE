@@ -39,7 +39,7 @@ namespace INFRASTRUCTURE.Migrations
 
                     b.Property<string>("Nome")
                         .IsRequired()
-                        .HasColumnType("VarChar(100)");
+                        .HasColumnType("VarChar(200)");
 
                     b.Property<string>("Telefone")
                         .IsRequired()
