@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CORE\CORE.csproj" />
+    <ProjectReference Include="..\CORE\TechChallange.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
