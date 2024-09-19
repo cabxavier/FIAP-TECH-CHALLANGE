@@ -11,7 +11,7 @@ namespace INFRASTRUCTURE.Repository.Configuration
             builder.ToTable("Contato");
             builder.HasKey(p => p.Id);
             builder.Property(p => p.Id).HasColumnType("Int").UseIdentityColumn();
-            builder.Property(p => p.Nome).HasColumnType("VarChar(100)").IsRequired();
+            builder.Property(p => p.Nome).HasColumnType("VarChar(200)").IsRequired();
             builder.HasIndex(p => p.Telefone).IsUnique();
             builder.Property(p => p.Telefone).HasColumnType("VarChar(11)").IsRequired();
             builder.HasIndex(p => p.Email).IsUnique();
