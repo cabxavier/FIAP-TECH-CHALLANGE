@@ -12,7 +12,7 @@ namespace CORE.Validator
                 .WithMessage("Informe o nome.");
             RuleFor(x => x.Telefone)
                 .NotEmpty()
-                .WithMessage("Informe o telefone")
+                .WithMessage("Informe o telefone.")
                 .Matches("[0-9]").WithMessage("Telefone deve ser informado somente números.")
                 .Matches(@"^\d{10,11}$").WithMessage("Telefone deve ter 10 e/ou 11 dígitos.");
             RuleFor(x => x.Email)
