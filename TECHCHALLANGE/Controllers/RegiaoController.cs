@@ -34,11 +34,13 @@ namespace TECHCHALLANGEAPI.Controllers
         }
 
         [HttpGet("{Id:int}")]
-        public async Task<IActionResult> Get([FromRoute] int Id)
+        public async Task<IActionResult> GetById([FromRoute] int Id)
         {
             try
             {
-                return Ok((await this.regiaoRepository.GetByIdAsync(Id)));
+                var regiao = await this.regiaoRepository.GetByIdAsync(Id);
+
+                return regiao is not null ? Ok(regiao) : NotFound("Não existe região com o filtro informado.");
             }
             catch (Exception ex)
             {
@@ -47,7 +49,7 @@ namespace TECHCHALLANGEAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] RegiaoInput RegiaoInput)
+        public async Task<IActionResult> Create([FromBody] RegiaoInput RegiaoInput)
         {
             try
             {
@@ -60,17 +62,21 @@ namespace TECHCHALLANGEAPI.Controllers
 
                 if (!regiaoValidatorResult.IsValid)
                 {
-                    foreach (var failure in regiaoValidatorResult.Errors)
+                    foreach (var erro in regiaoValidatorResult.Errors)
                     {
-                        return BadRequest($"Error: {failure.ErrorMessage}");
+                        return BadRequest($"Error: {erro.ErrorMessage}");
                     }
 
                     throw new ValidationException("Não foi possível validar a região.");
                 }
+                else if ((await this.regiaoRepository.GetByDddAsync(RegiaoInput.Ddd)) is not null)
+                {
+                    return BadRequest("Já existe região cadastrado com o ddd informado.");
+                }
 
                 await this.regiaoRepository.AddAsync(regiao);
 
-                return Ok();
+                return CreatedAtAction(nameof(this.GetById), new { id = regiao.Id }, regiao);
             }
             catch (Exception ex)
             {
@@ -79,7 +85,7 @@ namespace TECHCHALLANGEAPI.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Put([FromBody] RegiaoUpdateInput RegiaoUpdateInput)
+        public async Task<IActionResult> Update([FromBody] RegiaoUpdateInput RegiaoUpdateInput)
         {
             try
             {
@@ -90,24 +96,32 @@ namespace TECHCHALLANGEAPI.Controllers
                     return BadRequest("Não foi possível obter as informações da região.");
                 }
 
-                regiao.Id = RegiaoUpdateInput.Id;
+                var ddd = regiao.Ddd;
+
                 regiao.Ddd = RegiaoUpdateInput.Ddd;
 
                 var regiaoValidatorResult = await this.regiaoValidator.ValidateAsync(regiao);
 
                 if (!regiaoValidatorResult.IsValid)
                 {
-                    foreach (var failure in regiaoValidatorResult.Errors)
+                    foreach (var erro in regiaoValidatorResult.Errors)
                     {
-                        return BadRequest($"Error: {failure.ErrorMessage}");
+                        return BadRequest($"Error: {erro.ErrorMessage}");
                     }
 
                     throw new ValidationException("Não foi possível validar a região.");
                 }
+                else if (!ddd.Equals(RegiaoUpdateInput.Ddd))
+                {
+                    if ((await this.regiaoRepository.GetByDddAsync(regiao.Ddd)) is not null)
+                    {
+                        return BadRequest("Já existe região cadastrado com o ddd informado.");
+                    }
 
-                await this.regiaoRepository.UpdateAsync(regiao);
+                    await this.regiaoRepository.UpdateAsync(regiao);
+                }
 
-                return Ok();
+                return NoContent();
             }
             catch (Exception ex)
             {
@@ -129,7 +143,7 @@ namespace TECHCHALLANGEAPI.Controllers
 
                 await this.regiaoRepository.DeleteAsync(regiao.Id);
 
-                return Ok();
+                return NoContent();
             }
             catch (Exception ex)
             {

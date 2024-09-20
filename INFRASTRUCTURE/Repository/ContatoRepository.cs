@@ -11,7 +11,70 @@ namespace INFRASTRUCTURE.Repository
         {
         }
 
-        public async Task<IList<RegiaoDto>> ObterContatoRegiaoPorDdd(string Ddd)
+        public async Task<ContatoDto> GetByTelefoneAsync(string Telefone)
+        {
+            ContatoDto contatoDto = null;
+
+            var contato = await this.context.Contato.FirstOrDefaultAsync(p => p.Telefone.Equals(Telefone));
+
+            if (contato is not null)
+            {
+                contatoDto = new ContatoDto()
+                {
+                    Id = contato.Id,
+                    Nome = contato.Nome,
+                    Telefone = contato.Telefone,
+                    Email = contato.Email,
+                    DataCriacao = contato.DataCriacao,
+                };
+            }
+
+            return contatoDto;
+        }
+
+        public async Task<ContatoDto> GetByEmailAsync(string Email)
+        {
+            ContatoDto contatoDto = null;
+
+            var contato = await this.context.Contato.FirstOrDefaultAsync(p => p.Email.Equals(Email));
+
+            if (contato is not null)
+            {
+                contatoDto = new ContatoDto()
+                {
+                    Id = contato.Id,
+                    Nome = contato.Nome,
+                    Telefone = contato.Telefone,
+                    Email = contato.Email,
+                    DataCriacao = contato.DataCriacao,
+                };
+            }
+
+            return contatoDto;
+        }
+
+        public async Task<ContatoDto> GetByNomeAndTelefoneAndEmailAsync(string Nome, string Telefone, string Email)
+        {
+            ContatoDto contatoDto = null;
+
+            var contato = await this.context.Contato.FirstOrDefaultAsync(p => p.Nome.Equals(Nome) && p.Telefone.Equals(Telefone) && p.Email.Equals(Email));
+
+            if (contato is not null)
+            {
+                contatoDto = new ContatoDto()
+                {
+                    Id = contato.Id,
+                    Nome = contato.Nome,
+                    Telefone = contato.Telefone,
+                    Email = contato.Email,
+                    DataCriacao = contato.DataCriacao,
+                };
+            }
+
+            return contatoDto;
+        }
+
+        public async Task<IList<RegiaoDto>> GetContatoRegiaoByDddAsync(string Ddd)
         {
             var listaRegiao = new List<RegiaoDto>();
 

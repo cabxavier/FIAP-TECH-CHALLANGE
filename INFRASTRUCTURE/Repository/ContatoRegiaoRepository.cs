@@ -11,7 +11,27 @@ namespace INFRASTRUCTURE.Repository
         {
         }
 
-        public async Task<IList<ContatoRegiaoDto>> ObterContatoRegiaoTodos()
+        public async Task<ContatoRegiaoDto> GetByContatoIdAndRegiaoIdAsync(int ContatoId, int RegiaoId)
+        {
+            ContatoRegiaoDto contatoRegiaoDto = null;
+
+            var contatoRegiao = await this.context.ContatoRegiao.FirstOrDefaultAsync(p => p.ContatoId.Equals(ContatoId) && p.RegiaoId.Equals(RegiaoId));
+
+            if (contatoRegiao is not null)
+            {
+                contatoRegiaoDto = new ContatoRegiaoDto()
+                {
+                    Id = contatoRegiao.Id,
+                    ContatoId = contatoRegiao.ContatoId,
+                    RegiaoId = contatoRegiao.RegiaoId,
+                    DataCriacao = contatoRegiao.DataCriacao,
+                };
+            }
+
+            return contatoRegiaoDto;
+        }
+
+        public async Task<IList<ContatoRegiaoDto>> GetContatoRegiaoAllAsync()
         {
             var listContatoRegiaoDto = new List<ContatoRegiaoDto>();
             var listContatoRegiao =  await this.context.ContatoRegiao.ToListAsync();
@@ -54,7 +74,7 @@ namespace INFRASTRUCTURE.Repository
             return listContatoRegiaoDto;
         }
 
-        public async Task< ContatoRegiaoDto> ObterContatoRegiaoTodosPorId(int id)
+        public async Task< ContatoRegiaoDto> GetContatoRegiaoTodosByIdAsync(int id)
         {
             var contatoRegiao = await this.context.ContatoRegiao
                 .FirstOrDefaultAsync(p => p.Id == id)

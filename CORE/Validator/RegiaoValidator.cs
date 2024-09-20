@@ -10,8 +10,10 @@ namespace CORE.Validator
             RuleFor(x => x.Ddd)
                 .NotEmpty()
                 .WithMessage("Informe o ddd.")
-                .Matches("[0-9]").WithMessage("Ddd deve ser informado somente números.")
-                .Matches(@"^\d{2}$").WithMessage("Telefone deve ter 2 dígitos.");
+                .Matches("[0-9]")
+                .WithMessage("Ddd deve ser informado somente números.")
+                .Matches(@"^\d{2}$")
+                .WithMessage("Telefone deve ter 2 dígitos.");
         }
     }
 }
