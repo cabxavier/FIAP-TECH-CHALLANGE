@@ -29,7 +29,14 @@ namespace TECHCHALLANGEAPI.Controllers
         {
             try
             {
-                return Ok((await this.contatoRegiaoRepository.GetContatoRegiaoAllAsync()));
+                var result = await this.contatoRegiaoRepository.GetAllAsync();
+
+                if (result.Count == 0)
+                {
+                    return NoContent();
+                }
+
+                return Ok(result);
             }
             catch (Exception ex)
             {

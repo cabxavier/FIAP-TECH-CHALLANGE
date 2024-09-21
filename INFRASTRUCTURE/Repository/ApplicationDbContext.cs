@@ -18,6 +18,8 @@ namespace INFRASTRUCTURE.Repository
             this.connectionString = configuration.GetConnectionString("ConnectionString");
         }
 
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
+
         public ApplicationDbContext(string connectionString)
         {
             this.connectionString = connectionString;

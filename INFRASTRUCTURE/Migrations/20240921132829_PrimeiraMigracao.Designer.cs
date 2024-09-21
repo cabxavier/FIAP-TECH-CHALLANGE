@@ -9,10 +9,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace INFRASTRUCTURE.Migrations
+namespace TechChallange.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240919185318_PrimeiraMigracao")]
+    [Migration("20240921132829_PrimeiraMigracao")]
     partial class PrimeiraMigracao
     {
         /// <inheritdoc />

@@ -10,7 +10,7 @@ namespace CORE.Validator
             RuleFor(x => x.Nome)
                 .NotEmpty()
                 .WithMessage("Informe o nome.")
-                .Length(1, 200)
+                .Length(3, 200)
                 .WithMessage("Nome deve ter de 1 e/ou 100 caracteres.");
             RuleFor(x => x.Telefone)
                 .NotEmpty()

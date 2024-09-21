@@ -25,7 +25,14 @@ namespace TECHCHALLANGEAPI.Controllers
         {
             try
             {
-                return Ok((await this.regiaoRepository.GetAllAsync()));
+                var result = await this.regiaoRepository.GetAllAsync();
+
+                if (result.Count == 0)
+                {
+                    return NoContent();
+                }
+
+                return Ok(result);
             }
             catch (Exception ex)
             {
