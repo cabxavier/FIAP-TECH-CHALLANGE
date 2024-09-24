@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# xUnit1028: Test method must have valid return type
+dotnet_diagnostic.xUnit1028.severity = suggestion
