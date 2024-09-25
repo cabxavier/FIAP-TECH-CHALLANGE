@@ -46,7 +46,6 @@ namespace TechChallange.Test.Controller
         public async Task CreateContatoAsync_ShouldReturn201Status()
         {
             var contatoRepository = new Mock<IContatoRepository>();
-            var contatoValidator = new ContatoValidator();
             var contatoInput = ContatoMockData.ContatoInputNovo();
             var sut = new ContatoController(contatoRepository.Object, this.contatoValidator);
 

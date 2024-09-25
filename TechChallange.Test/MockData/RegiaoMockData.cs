@@ -1,4 +1,5 @@
 ﻿using CORE.Entity;
+using CORE.Input;
 
 namespace TechChallange.Test.MockData
 {
@@ -32,6 +33,29 @@ namespace TechChallange.Test.MockData
                     Ddd = "41",
                     ContatosRegioes = new List<ContatoRegiao>()
                 }
+            };
+        }
+
+        public static List<Regiao> GetRegiaoVazia()
+        {
+            return new List<Regiao>();
+        }
+
+        public static Regiao RegiaoNovo()
+        {
+            return new Regiao
+            {
+                Id = 1,
+                Ddd = "11",
+                ContatosRegioes = new List<ContatoRegiao>()
+            };
+        }
+
+        public static RegiaoInput RegiaoInputNovo()
+        {
+            return new RegiaoInput
+            {
+                Ddd = "11"
             };
         }
     }
