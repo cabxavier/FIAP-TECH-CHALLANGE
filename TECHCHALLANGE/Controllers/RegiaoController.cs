@@ -4,7 +4,6 @@ using CORE.Repository;
 using CORE.Validator;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using TechChallange;
 
 namespace TECHCHALLANGEAPI.Controllers
 {
@@ -157,21 +156,6 @@ namespace TECHCHALLANGEAPI.Controllers
             {
                 return BadRequest($"Error:  {ex.Message}.");
             }
-        }
-
-        public object GetRegiaoPorDdd(string ddd)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task GetByIdAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<CreatedAtActionResult> Create(List<Regiao> regiaoInput)
-        {
-            throw new NotImplementedException();
         }
     }
 }
