@@ -29,7 +29,7 @@ namespace TECHCHALLANGEAPI.Controllers
 
                 if (result.Count == 0)
                 {
-                    return NoContent();
+                    return NotFound();
                 }
 
                 return Ok(result);
@@ -45,9 +45,14 @@ namespace TECHCHALLANGEAPI.Controllers
         {
             try
             {
-                var regiao = await this.regiaoRepository.GetByIdAsync(Id);
+                var result = await this.regiaoRepository.GetByIdAsync(Id);
 
-                return regiao is not null ? Ok(regiao) : NotFound("Não existe região com o filtro informado.");
+                if (result is null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -92,11 +97,11 @@ namespace TECHCHALLANGEAPI.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody] RegiaoUpdateInput RegiaoUpdateInput)
+        public async Task<IActionResult> Update([FromBody] RegiaoInputUpdate RegiaoInputUpdate)
         {
             try
             {
-                var regiao = await this.regiaoRepository.GetByIdAsync(RegiaoUpdateInput.Id);
+                var regiao = await this.regiaoRepository.GetByIdAsync(RegiaoInputUpdate.Id);
 
                 if (regiao is null)
                 {
@@ -105,7 +110,7 @@ namespace TECHCHALLANGEAPI.Controllers
 
                 var ddd = regiao.Ddd;
 
-                regiao.Ddd = RegiaoUpdateInput.Ddd;
+                regiao.Ddd = RegiaoInputUpdate.Ddd;
 
                 var regiaoValidatorResult = await this.regiaoValidator.ValidateAsync(regiao);
 
@@ -118,7 +123,7 @@ namespace TECHCHALLANGEAPI.Controllers
 
                     throw new ValidationException("Não foi possível validar a região.");
                 }
-                else if (!ddd.Equals(RegiaoUpdateInput.Ddd))
+                else if (!ddd.Equals(RegiaoInputUpdate.Ddd))
                 {
                     if ((await this.regiaoRepository.GetByDddAsync(regiao.Ddd)) is not null)
                     {

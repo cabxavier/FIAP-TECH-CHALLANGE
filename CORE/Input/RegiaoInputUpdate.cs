@@ -1,8 +1,8 @@
 ﻿namespace CORE.Input
 {
-    public class RegiaoUpdateInput
+    public class RegiaoInputUpdate
     {
-        public int Id {  get; set; }
+        public required int Id {  get; set; }
         public required string Ddd { get; set; }
     }
 }

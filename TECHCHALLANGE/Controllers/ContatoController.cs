@@ -29,7 +29,7 @@ namespace TECHCHALLANGEAPI.Controllers
 
                 if (result.Count == 0)
                 {
-                    return NoContent();
+                    return NotFound();
                 }
 
                 return Ok(result);
@@ -45,9 +45,14 @@ namespace TECHCHALLANGEAPI.Controllers
         {
             try
             {
-                var contato = await this.contatoRepository.GetByIdAsync(Id);
+                var result = await this.contatoRepository.GetByIdAsync(Id);
 
-                return contato is not null ? Ok(contato) : NotFound("Não existe contato com o filtro informado.");
+                if (result is null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -60,9 +65,14 @@ namespace TECHCHALLANGEAPI.Controllers
         {
             try
             {
-                var lista = await this.contatoRepository.GetContatoRegiaoByDddAsync(Ddd);
+                var result = await this.contatoRepository.GetContatoRegiaoByDddAsync(Ddd);
 
-                return ((lista == null ? 0 : lista.Count) > 0) ? Ok(lista) : NotFound("Não existem contato(s) com o ddd informado.");
+                if (result.Count == 0)
+                {
+                    return NotFound();
+                }
+
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -117,11 +127,11 @@ namespace TECHCHALLANGEAPI.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody] ContatoUpdateInput ContatoUpdateInput)
+        public async Task<IActionResult> Update([FromBody] ContatoInputUpdate ContatoInputUpdate)
         {
             try
             {
-                var contato = await this.contatoRepository.GetByIdAsync(ContatoUpdateInput.Id);
+                var contato = await this.contatoRepository.GetByIdAsync(ContatoInputUpdate.Id);
 
                 if (contato is null)
                 {
@@ -132,9 +142,9 @@ namespace TECHCHALLANGEAPI.Controllers
                 var telefone = contato.Telefone;
                 var email = contato.Email;
 
-                contato.Nome = ContatoUpdateInput.Nome;
-                contato.Telefone = ContatoUpdateInput.Telefone;
-                contato.Email = ContatoUpdateInput.Email;
+                contato.Nome = ContatoInputUpdate.Nome;
+                contato.Telefone = ContatoInputUpdate.Telefone;
+                contato.Email = ContatoInputUpdate.Email;
 
                 var contatoValidatorResult = await this.contatoValidator.ValidateAsync(contato);
 
@@ -147,13 +157,13 @@ namespace TECHCHALLANGEAPI.Controllers
 
                     throw new ValidationException("Não foi possível validar o contato.");
                 }
-                else if (!telefone.Equals(ContatoUpdateInput.Telefone))
+                else if (!telefone.Equals(ContatoInputUpdate.Telefone))
                 {
                     if ((await this.contatoRepository.GetByTelefoneAsync(contato.Telefone)) is not null)
                     {
                         return BadRequest("Já existe contato cadastrado com o telefone informado.");
                     }
-                }else if (!email.Equals(ContatoUpdateInput.Email))
+                }else if (!email.Equals(ContatoInputUpdate.Email))
                 {
                     if ((await this.contatoRepository.GetByEmailAsync(contato.Email)) is not null)
                     {

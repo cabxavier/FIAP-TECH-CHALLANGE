@@ -5,7 +5,7 @@ namespace TechChallange.Test.MockData
 {
     public class RegiaoMockData
     {
-        public static List<Regiao> GetRegiaoAll()
+        public static List<Regiao> GetAll()
         {
             return new List<Regiao>
             {
@@ -36,12 +36,12 @@ namespace TechChallange.Test.MockData
             };
         }
 
-        public static List<Regiao> GetRegiaoVazia()
+        public static List<Regiao> GetAllVazio()
         {
             return new List<Regiao>();
         }
 
-        public static Regiao RegiaoNovo()
+        public static Regiao Regiao()
         {
             return new Regiao
             {
@@ -51,11 +51,20 @@ namespace TechChallange.Test.MockData
             };
         }
 
-        public static RegiaoInput RegiaoInputNovo()
+        public static RegiaoInput RegiaoInput()
         {
             return new RegiaoInput
             {
                 Ddd = "11"
+            };
+        }
+
+        public static RegiaoInputUpdate RegiaoInputUpdate()
+        {
+            return new RegiaoInputUpdate
+            {
+                Id = 1,
+                Ddd = "14"
             };
         }
     }

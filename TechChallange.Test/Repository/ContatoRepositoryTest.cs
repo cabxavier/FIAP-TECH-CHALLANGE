@@ -5,11 +5,11 @@ using TechChallange.Test.MockData;
 
 namespace TechChallange.Test.RepositoryTests
 {
-    public class TestRegiaoRepository : IDisposable
+    public class ContatoRepositoryTest : IDisposable
     {
         protected readonly ApplicationDbContext _context;
 
-        public TestRegiaoRepository()
+        public ContatoRepositoryTest()
         {
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
              .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
@@ -20,15 +20,15 @@ namespace TechChallange.Test.RepositoryTests
         }        
 
         [Fact]
-        public async Task GetRegiaoAllAsync_ReturnRegiaoCollection()
+        public async Task GetAllAsync_ReturnContatoCollection()
         {
-            _context.Regiao.AddRange(RegiaoMockData.GetRegiaoAll());
+            _context.Contato.AddRange(ContatoMockData.GetAll());
             _context.SaveChanges();
 
-            var sut = new RegiaoRepository(_context);
+            var sut = new ContatoRepository(_context);
 
             var result = await sut.GetAllAsync();
-            result.Should().HaveCount(RegiaoMockData.GetRegiaoAll().Count);
+            result.Should().HaveCount(ContatoMockData.GetAll().Count);
         }
 
         public void Dispose()

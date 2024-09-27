@@ -33,7 +33,7 @@ namespace TECHCHALLANGEAPI.Controllers
 
                 if (result.Count == 0)
                 {
-                    return NoContent();
+                    return NotFound();
                 }
 
                 return Ok(result);
@@ -49,9 +49,14 @@ namespace TECHCHALLANGEAPI.Controllers
         {
             try
             {
-                var contatoRegiao = await this.contatoRegiaoRepository.GetContatoRegiaoTodosByIdAsync(Id);
+                var result = await this.contatoRegiaoRepository.GetContatoRegiaoTodosByIdAsync(Id);
 
-                return contatoRegiao is not null ? Ok(contatoRegiao) : NotFound("Não existe contato região com o filtro informado.");
+                if (result is null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -105,13 +110,13 @@ namespace TECHCHALLANGEAPI.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody] ContatoRegiaoUpdateInput ContatoRegiaoUpdateInput)
+        public async Task<IActionResult> Update([FromBody] ContatoRegiaoInputUpdate ContatoRegiaoInputUpdate)
         {
             try
             {
-                var contatoRegiao = await this.contatoRegiaoRepository.GetByIdAsync(ContatoRegiaoUpdateInput.Id);
-                var contato = await this.contatoRepository.GetByIdAsync(ContatoRegiaoUpdateInput.ContatoId);
-                var regiao = await this.regiaoRepository.GetByIdAsync(ContatoRegiaoUpdateInput.RegiaoId);
+                var contatoRegiao = await this.contatoRegiaoRepository.GetByIdAsync(ContatoRegiaoInputUpdate.Id);
+                var contato = await this.contatoRepository.GetByIdAsync(ContatoRegiaoInputUpdate.ContatoId);
+                var regiao = await this.regiaoRepository.GetByIdAsync(ContatoRegiaoInputUpdate.RegiaoId);
 
                 if (contatoRegiao is null)
                 {
@@ -129,8 +134,8 @@ namespace TECHCHALLANGEAPI.Controllers
                 var contatoId = contatoRegiao.ContatoId;
                 var regiaoId = contatoRegiao.RegiaoId;
 
-                contatoRegiao.ContatoId = ContatoRegiaoUpdateInput.ContatoId;
-                contatoRegiao.RegiaoId = ContatoRegiaoUpdateInput.RegiaoId;
+                contatoRegiao.ContatoId = ContatoRegiaoInputUpdate.ContatoId;
+                contatoRegiao.RegiaoId = ContatoRegiaoInputUpdate.RegiaoId;
 
                 var contatoRegiaoValidatorResult = await this.contatoRegiaoValidator.ValidateAsync(contatoRegiao);
 
@@ -143,7 +148,7 @@ namespace TECHCHALLANGEAPI.Controllers
 
                     throw new ValidationException("Não foi possível validar a contato região.");
                 }
-                else if ((!contatoId.Equals(ContatoRegiaoUpdateInput.ContatoId)) || (!regiaoId.Equals(ContatoRegiaoUpdateInput.RegiaoId)))
+                else if ((!contatoId.Equals(ContatoRegiaoInputUpdate.ContatoId)) || (!regiaoId.Equals(ContatoRegiaoInputUpdate.RegiaoId)))
                 {
                     if ((await this.contatoRegiaoRepository.GetByContatoIdAndRegiaoIdAsync(contatoRegiao.ContatoId, contatoRegiao.RegiaoId)) is not null)
                     {

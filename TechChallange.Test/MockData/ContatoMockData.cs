@@ -5,7 +5,7 @@ namespace TechChallange.Test.MockData
 {
     public class ContatoMockData
     {
-        public static List<Contato> GetContatoAll()
+        public static List<Contato> GetAll()
         {
             return new List<Contato>
             {
@@ -30,12 +30,12 @@ namespace TechChallange.Test.MockData
             };
         }
 
-        public static List<Contato> GetContatoVazia()
+        public static List<Contato> GetAllVazio()
         {
             return new List<Contato>();
         }
 
-        public static Contato ContatoNovo()
+        public static Contato Contato()
         {
             return new Contato
             {
@@ -46,13 +46,24 @@ namespace TechChallange.Test.MockData
             };
         }
 
-        public static ContatoInput ContatoInputNovo()
+        public static ContatoInput ContatoInput()
         {
             return new ContatoInput
             {
                 Nome = "Contato_1",
                 Telefone = "1411111111",
                 Email = "contato1@gmail.com"
+            };
+        }
+
+        public static ContatoInputUpdate ContatoInputUpdate()
+        {
+            return new ContatoInputUpdate
+            {
+                Id = 1,
+                Nome = "Contato_10",
+                Telefone = "1511111111",
+                Email = "contato10@gmail.com"
             };
         }
     }
