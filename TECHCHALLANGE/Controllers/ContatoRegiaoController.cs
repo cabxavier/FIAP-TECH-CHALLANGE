@@ -24,6 +24,10 @@ namespace TECHCHALLANGEAPI.Controllers
             this.contatoRegiaoValidator = contatoRegiaoValidator;
         }
 
+        public ContatoRegiaoController(IContatoRegiaoRepository @object, ContatoRegiaoValidator contatoRegiaoValidator1)
+        {
+        }
+
         [HttpGet]
         public async Task<IActionResult> Get()
         {
