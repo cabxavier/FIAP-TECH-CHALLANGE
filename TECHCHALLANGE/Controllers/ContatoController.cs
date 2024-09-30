@@ -13,11 +13,19 @@ namespace TECHCHALLANGEAPI.Controllers
     {
         private readonly IContatoRepository contatoRepository;
         private readonly ContatoValidator contatoValidator;
+        private IContatoRegiaoRepository @object;
+        private ContatoRegiaoValidator contatoRegiaoValidator;
 
         public ContatoController(IContatoRepository contatoRepository, ContatoValidator contatoValidator)
         {
             this.contatoRepository = contatoRepository;
             this.contatoValidator = contatoValidator;
+        }
+
+        public ContatoController(IContatoRegiaoRepository @object, ContatoRegiaoValidator contatoRegiaoValidator)
+        {
+            this.@object = @object;
+            this.contatoRegiaoValidator = contatoRegiaoValidator;
         }
 
         [HttpGet]
@@ -201,6 +209,11 @@ namespace TECHCHALLANGEAPI.Controllers
             {
                 return BadRequest($"Error:  {ex.Message}.");
             }
+        }
+
+        public async Task Update(ContatoRegiaoInputUpdate contatoRegiaoInputUpdate)
+        {
+            throw new NotImplementedException();
         }
     }
 }
