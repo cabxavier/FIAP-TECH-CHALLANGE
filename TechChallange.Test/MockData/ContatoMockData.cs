@@ -9,19 +9,22 @@ namespace TechChallange.Test.MockData
         {
             return new List<Contato>
             {
-                new Contato{
+                new Contato
+                {
                     Id = 1,
                     Nome = "Contato_1",
                     Telefone = "1411111111",
                     Email = "contato1@gmail.com"
                 },
-                new Contato{
+                new Contato
+                {
                     Id = 2,
                     Nome = "Contato_2",
                     Telefone = "1422222222",
                     Email = "contato2@gmail.com"
                 },
-                new Contato{
+                new Contato
+                {
                     Id = 3,
                     Nome = "Contato_3",
                     Telefone = "1433333333",

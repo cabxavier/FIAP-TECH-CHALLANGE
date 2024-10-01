@@ -74,7 +74,7 @@ namespace INFRASTRUCTURE.Repository
             return listContatoRegiaoDto;
         }
 
-        public async Task< ContatoRegiaoDto> GetContatoRegiaoTodosByIdAsync(int id)
+        public async Task<ContatoRegiaoDto> GetContatoRegiaoByIdAsync(int id)
         {
             var contatoRegiao = await this.context.ContatoRegiao
                 .FirstOrDefaultAsync(p => p.Id == id)

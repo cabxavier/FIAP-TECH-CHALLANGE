@@ -26,12 +26,6 @@ namespace TechChallange.Test.MockData
                     Id = 3,
                     Ddd = "31",
                     ContatosRegioes = new List<ContatoRegiao>()
-                },
-                new Regiao
-                {
-                    Id = 4,
-                    Ddd = "41",
-                    ContatosRegioes = new List<ContatoRegiao>()
                 }
             };
         }

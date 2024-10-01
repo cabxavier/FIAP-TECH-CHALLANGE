@@ -23,7 +23,7 @@ namespace TECHCHALLANGEAPI.Controllers
             this.regiaoRepository = regiaoRepository;
             this.contatoRegiaoValidator = contatoRegiaoValidator;
         }
-
+         
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -47,9 +47,9 @@ namespace TECHCHALLANGEAPI.Controllers
         [HttpGet("{Id:int}")]
         public async Task<IActionResult> GetById([FromRoute] int Id)
         {
-            try
+            try           
             {
-                var result = await this.contatoRegiaoRepository.GetContatoRegiaoTodosByIdAsync(Id);
+                var result = await this.contatoRegiaoRepository.GetContatoRegiaoByIdAsync(Id);
 
                 if (result is null)
                 {

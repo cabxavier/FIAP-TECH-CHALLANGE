@@ -4,82 +4,77 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using TechChallange.Test.MockData;
 using TECHCHALLANGEAPI.Controllers;
-using FluentAssertions;
-using CORE.Input;
 
 namespace TechChallange.Test.Controller
 {
     public class ContatoControllerTest
     {
+        private Mock<IContatoRepository> contatoRepository;
         private ContatoValidator contatoValidator;
        
         public ContatoControllerTest()
         {
+            this.contatoRepository = new Mock<IContatoRepository>();
             this.contatoValidator = new ContatoValidator();
         }
 
         [Fact]
-        public async Task GetAllAsync_ShouldReturn200Status()
+        public async Task GetAllAsync_ShouldReturnOkObjectResult()
         {
-            var contatoRepository = new Mock<IContatoRepository>();
-            contatoRepository.Setup(_ => _.GetAllAsync()).ReturnsAsync(ContatoMockData.GetAll());
-            var sut = new ContatoController(contatoRepository.Object, this.contatoValidator);
+            this.contatoRepository.Setup(_ => _.GetAllAsync()).ReturnsAsync(ContatoMockData.GetAll());
+            var sut = new ContatoController(this.contatoRepository.Object, this.contatoValidator);
 
             var result = await sut.Get();
             Assert.IsType<OkObjectResult>(result);
         }
 
         [Fact]
-        public async Task GetAllVazioAsync_ShouldReturn404Status()
+        public async Task GetAllVazioAsync_ShouldReturnNotFoundResult()
         {
-            var contatoRepository = new Mock<IContatoRepository>();
-            contatoRepository.Setup(_ => _.GetAllAsync()).ReturnsAsync(ContatoMockData.GetAllVazio());
-            var sut = new ContatoController(contatoRepository.Object, this.contatoValidator);
+            this.contatoRepository.Setup(_ => _.GetAllAsync()).ReturnsAsync(ContatoMockData.GetAllVazio());
+            var sut = new ContatoController(this.contatoRepository.Object, this.contatoValidator);
 
             var result = await sut.Get();
             Assert.IsType<NotFoundResult>(result);
-            contatoRepository.Verify(_ => _.GetAllAsync(), Times.Exactly(1));
+            this.contatoRepository.Verify(_ => _.GetAllAsync(), Times.Exactly(1));
         }
 
         [Fact]
-        public async Task GetByIdAsync_ShouldReturn200Status()
+        public async Task GetByIdAsync_ShouldReturnOkObjectResult()
         {
-            var contatoRepository = new Mock<IContatoRepository>();
-            contatoRepository.Setup(_ => _.GetByIdAsync(1)).ReturnsAsync(ContatoMockData.Contato);
-            var sut = new ContatoController(contatoRepository.Object, this.contatoValidator);
+            var contatoId = 1;
+            this.contatoRepository.Setup(_ => _.GetByIdAsync(contatoId)).ReturnsAsync(ContatoMockData.Contato);
+            var sut = new ContatoController(this.contatoRepository.Object, this.contatoValidator);
 
-            var result = await sut.GetById(1);
+            var result = await sut.GetById(contatoId);
             Assert.IsType<OkObjectResult>(result);
         }
 
         [Fact]
-        public async Task CreateContatoAsync_ShouldReturn201Status()
+        public async Task CreateContatoAsync_ShouldReturnCreatedAtActionResult()
         {
-            var contatoRepository = new Mock<IContatoRepository>();
             var contatoInput = ContatoMockData.ContatoInput();
-            var sut = new ContatoController(contatoRepository.Object, this.contatoValidator);
+            var sut = new ContatoController(this.contatoRepository.Object, this.contatoValidator);
 
             var result = await sut.Create(contatoInput);
             Assert.IsType<CreatedAtActionResult>(result);
         }
 
         [Fact]
-        public async Task UpdateContatoAsync_ShouldReturnBadRequestStatus()
+        public async Task UpdateContatoAsync_ShouldReturnBadRequestObjectResult()
         {
-            var contatoRepository = new Mock<IContatoRepository>();
             var contatoInputUpdate = ContatoMockData.ContatoInputUpdate();
-            var sut = new ContatoController(contatoRepository.Object, this.contatoValidator);
+            var sut = new ContatoController(this.contatoRepository.Object, this.contatoValidator);
 
             var result = await sut.Update(contatoInputUpdate);
             Assert.IsType<BadRequestObjectResult>(result);
         }
 
         [Fact]
-        public async Task DeleteContatoAsync_ShouldReturnBadRequestStatus()
+        public async Task DeleteContatoAsync_ShouldReturnBadRequestObjectResult()
         {
-            var contatoRepository = new Mock<IContatoRepository>();
             var contatoId = 1;
-            var sut = new ContatoController(contatoRepository.Object, this.contatoValidator);
+            var sut = new ContatoController(this.contatoRepository.Object, this.contatoValidator);
 
             var result = await sut.Delete(contatoId);
             Assert.IsType<BadRequestObjectResult>(result);

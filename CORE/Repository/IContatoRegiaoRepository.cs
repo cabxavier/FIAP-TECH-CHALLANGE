@@ -7,6 +7,6 @@ namespace CORE.Repository
     {
         Task<ContatoRegiaoDto> GetByContatoIdAndRegiaoIdAsync(int ContatoId, int RegiaoId);
         Task<IList<ContatoRegiaoDto>> GetContatoRegiaoAllAsync();
-        Task<ContatoRegiaoDto> GetContatoRegiaoTodosByIdAsync(int id);
+        Task<ContatoRegiaoDto> GetContatoRegiaoByIdAsync(int id);
     }
 }
