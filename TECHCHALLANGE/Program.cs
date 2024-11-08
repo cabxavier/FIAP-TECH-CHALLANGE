@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var configuration = new ConfigurationBuilder()
+/*var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json")
-    .Build();
+    .Build();*/
 
 // Add services to the container.
 
@@ -35,11 +35,8 @@ builder.Services.AddScoped<ContatoRegiaoValidator>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
