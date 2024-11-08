@@ -16,11 +16,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-{
-    options.UseSqlServer(configuration.GetConnectionString("ConnectionString"));
+//builder.Services.AddDbContext<ApplicationDbContext>(options =>
+//{
+//    options.UseSqlServer(configuration.GetConnectionString("ConnectionString"));
 
-}, ServiceLifetime.Scoped);
+//}, ServiceLifetime.Scoped);
+
+builder.Services.AddDbContext<ApplicationDbContext>(opt =>
+    opt.UseInMemoryDatabase("BDContato"));
 
 builder.Services.AddScoped<IContatoRepository, ContatoRepository>();
 builder.Services.AddScoped<IRegiaoRepository, RegiaoRepository>();
