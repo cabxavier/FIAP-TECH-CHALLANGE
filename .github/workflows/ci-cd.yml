@@ -20,6 +20,9 @@ jobs:
       with:
         username: 'cabxavier'
         password: ${{ secrets.DOCKERHUB_FIAP_TECHCHALLANGE_PASSWORD }}
+
+    - name: Build and start Docker Compose
+      run: docker-compose up --build -d
     
     - name: Build and push Docker images
       uses: docker/build-push-action@v6.9.0

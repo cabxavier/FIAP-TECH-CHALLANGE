@@ -1,0 +1,48 @@
+services:
+  techchallangeapi:
+    image: fiap-tech-tech-challange
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:80"        # Expondo a porta 80 no contêiner para a 5000 no host
+    environment:
+      - ASPNETCORE_URLS=http://+:80
+    stdin_open: true    # Permite interação com o contêiner (modo interativo)
+    tty: true           # Terminal interativo
+    networks:
+      - monitoring
+
+  prometheus:
+    build:
+      context: ./prometheus
+      dockerfile: Dockerfile
+      args:
+        version: 1
+    image: prometheus
+    restart: always
+    ports: 
+      - 9090:9090
+    networks:
+      - monitoring
+    volumes: 
+      - './prometheus/data:/data'
+
+  grafana:
+    build:
+      context: ./grafana
+      dockerfile: Dockerfile
+      args:
+        version: 1
+    image: grafana
+    restart: always
+    ports:
+      - 3000:3000
+    depends_on:
+      - prometheus
+    networks: 
+      - monitoring
+
+networks:
+  monitoring:
+    driver: bridge
