@@ -11,7 +11,7 @@ namespace TechChallange.Test.Controller
     {
         private Mock<IContatoRepository> contatoRepository;
         private ContatoValidator contatoValidator;
-       
+
         public ContatoControllerTest()
         {
             this.contatoRepository = new Mock<IContatoRepository>();
