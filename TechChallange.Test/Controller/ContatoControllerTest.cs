@@ -47,7 +47,7 @@ namespace TechChallange.Test.Controller
             var sut = new ContatoController(this.contatoRepository.Object, this.contatoValidator);
 
             var result = await sut.GetById(contatoId);
-            Assert.IsType<CreatedAtActionResult>(result);
+            Assert.IsType<OkObjectResult>(result);
         }
 
         [Fact]
