@@ -8,6 +8,8 @@ using INFRASTRUCTURE.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddControllers();
+
 builder.Services.AddOpenTelemetry()
     .WithMetrics(metrics =>
     {
@@ -20,7 +22,6 @@ builder.Services.AddOpenTelemetry()
             .AddPrometheusExporter();
     });
 
-builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
