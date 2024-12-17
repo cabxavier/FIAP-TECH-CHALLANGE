@@ -35,8 +35,6 @@ builder.Services.AddScoped<ContatoValidator>();
 builder.Services.AddScoped<RegiaoValidator>();
 builder.Services.AddScoped<ContatoRegiaoValidator>();
 
-
-
 var app = builder.Build();
 
 app.UseSwagger();
