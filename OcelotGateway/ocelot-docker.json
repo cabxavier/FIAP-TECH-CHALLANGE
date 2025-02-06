@@ -1,0 +1,316 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/contato",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "techchallangeapi",
+          "Port": 5000
+        }
+      ],
+      "UpstreamPathTemplate": "/contato",
+      "UpstreamHttpMethod": [ "Get" ],
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "1m",
+        "PeriodTimespan": 1,
+        "Limit": 5,
+        "QuotaExceededMessage": "Rate limit exceeded",
+        "HttpStatusCode": 429
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/contato/{Id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "techchallangeapi",
+          "Port": 5000
+        }
+      ],
+      "UpstreamPathTemplate": "/contato/{Id}",
+      "UpstreamHttpMethod": [ "Get" ],
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "1m",
+        "PeriodTimespan": 1,
+        "Limit": 5,
+        "QuotaExceededMessage": "Rate limit exceeded",
+        "HttpStatusCode": 429
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/contato/ddd/{Id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "techchallangeapi",
+          "Port": 5000
+        }
+      ],
+      "UpstreamPathTemplate": "/contato/ddd/{Ddd}",
+      "UpstreamHttpMethod": [ "Get" ],
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "1m",
+        "PeriodTimespan": 1,
+        "Limit": 5,
+        "QuotaExceededMessage": "Rate limit exceeded",
+        "HttpStatusCode": 429
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/contato",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "techchallangeapi",
+          "Port": 5000
+        }
+      ],
+      "UpstreamPathTemplate": "/contato",
+      "UpstreamHttpMethod": [ "Post" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/contato",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "techchallangeapi",
+          "Port": 5000
+        }
+      ],
+      "UpstreamPathTemplate": "/contato",
+      "UpstreamHttpMethod": [ "Put" ],
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "1m",
+        "PeriodTimespan": 1,
+        "Limit": 5,
+        "QuotaExceededMessage": "Rate limit exceeded",
+        "HttpStatusCode": 429
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/contato/{Id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "techchallangeapi",
+          "Port": 5000
+        }
+      ],
+      "UpstreamPathTemplate": "/contato/{Id}",
+      "UpstreamHttpMethod": [ "Delete" ],
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "1m",
+        "PeriodTimespan": 1,
+        "Limit": 5,
+        "QuotaExceededMessage": "Rate limit exceeded",
+        "HttpStatusCode": 429
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/regiao",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "techchallangeapi",
+          "Port": 5000
+        }
+      ],
+      "UpstreamPathTemplate": "/regiao",
+      "UpstreamHttpMethod": [ "Get" ],
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "1m",
+        "PeriodTimespan": 1,
+        "Limit": 5,
+        "QuotaExceededMessage": "Rate limit exceeded",
+        "HttpStatusCode": 429
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/regiao/{Id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "techchallangeapi",
+          "Port": 5000
+        }
+      ],
+      "UpstreamPathTemplate": "/regiao/{Id}",
+      "UpstreamHttpMethod": [ "Get" ],
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "1m",
+        "PeriodTimespan": 1,
+        "Limit": 5,
+        "QuotaExceededMessage": "Rate limit exceeded",
+        "HttpStatusCode": 429
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/regiao",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "techchallangeapi",
+          "Port": 5000
+        }
+      ],
+      "UpstreamPathTemplate": "/regiao",
+      "UpstreamHttpMethod": [ "Post" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/regiao",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "techchallangeapi",
+          "Port": 5000
+        }
+      ],
+      "UpstreamPathTemplate": "/regiao",
+      "UpstreamHttpMethod": [ "Put" ],
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "1m",
+        "PeriodTimespan": 1,
+        "Limit": 5,
+        "QuotaExceededMessage": "Rate limit exceeded",
+        "HttpStatusCode": 429
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/regiao/{Id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "techchallangeapi",
+          "Port": 5000
+        }
+      ],
+      "UpstreamPathTemplate": "/regiao/{Id}",
+      "UpstreamHttpMethod": [ "Delete" ],
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "1m",
+        "PeriodTimespan": 1,
+        "Limit": 5,
+        "QuotaExceededMessage": "Rate limit exceeded",
+        "HttpStatusCode": 429
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/contatoregiao",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "techchallangeapi",
+          "Port": 5000
+        }
+      ],
+      "UpstreamPathTemplate": "/contatoregiao",
+      "UpstreamHttpMethod": [ "Get" ],
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "1m",
+        "PeriodTimespan": 1,
+        "Limit": 5,
+        "QuotaExceededMessage": "Rate limit exceeded",
+        "HttpStatusCode": 429
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/contatoregiao/{Id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "techchallangeapi",
+          "Port": 5000
+        }
+      ],
+      "UpstreamPathTemplate": "/contatoregiao/{Id}",
+      "UpstreamHttpMethod": [ "Get" ],
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "1m",
+        "PeriodTimespan": 1,
+        "Limit": 5,
+        "QuotaExceededMessage": "Rate limit exceeded",
+        "HttpStatusCode": 429
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/contatoregiao",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "techchallangeapi",
+          "Port": 5000
+        }
+      ],
+      "UpstreamPathTemplate": "/contatoregiao",
+      "UpstreamHttpMethod": [ "Post" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/contatoregiao",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "techchallangeapi",
+          "Port": 5000
+        }
+      ],
+      "UpstreamPathTemplate": "/contatoregiao",
+      "UpstreamHttpMethod": [ "Put" ],
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "1m",
+        "PeriodTimespan": 1,
+        "Limit": 5,
+        "QuotaExceededMessage": "Rate limit exceeded",
+        "HttpStatusCode": 429
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/contatoregiao/{Id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "techchallangeapi",
+          "Port": 5000
+        }
+      ],
+      "UpstreamPathTemplate": "/contatoregiao/{Id}",
+      "UpstreamHttpMethod": [ "Delete" ],
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "1m",
+        "PeriodTimespan": 1,
+        "Limit": 5,
+        "QuotaExceededMessage": "Rate limit exceeded",
+        "HttpStatusCode": 429
+      }
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "http://ocelotgatewayapi"
+  }
+}

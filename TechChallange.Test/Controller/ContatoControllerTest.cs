@@ -2,6 +2,7 @@
 using CORE.Validator;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using TechChallange.Core.ServiceRabbitMQ;
 using TechChallange.Test.MockData;
 using TECHCHALLANGEAPI.Controllers;
 
@@ -11,6 +12,7 @@ namespace TechChallange.Test.Controller
     {
         private Mock<IContatoRepository> contatoRepository;
         private ContatoValidator contatoValidator;
+        private RabbitMQProdutorService rabbitMQProdutorService;
 
         public ContatoControllerTest()
         {
@@ -22,7 +24,7 @@ namespace TechChallange.Test.Controller
         public async Task GetAllAsync_ShouldReturnOkObjectResult()
         {
             this.contatoRepository.Setup(_ => _.GetAllAsync()).ReturnsAsync(ContatoMockData.GetAll());
-            var sut = new ContatoController(this.contatoRepository.Object, this.contatoValidator);
+            var sut = new ContatoController(this.contatoRepository.Object, this.contatoValidator, this.rabbitMQProdutorService);
 
             var result = await sut.Get();
             Assert.IsType<OkObjectResult>(result);
@@ -32,7 +34,7 @@ namespace TechChallange.Test.Controller
         public async Task GetAllVazioAsync_ShouldReturnNotFoundResult()
         {
             this.contatoRepository.Setup(_ => _.GetAllAsync()).ReturnsAsync(ContatoMockData.GetAllVazio());
-            var sut = new ContatoController(this.contatoRepository.Object, this.contatoValidator);
+            var sut = new ContatoController(this.contatoRepository.Object, this.contatoValidator, this.rabbitMQProdutorService);
 
             var result = await sut.Get();
             Assert.IsType<NotFoundResult>(result);
@@ -44,7 +46,7 @@ namespace TechChallange.Test.Controller
         {
             var contatoId = 1;
             this.contatoRepository.Setup(_ => _.GetByIdAsync(contatoId)).ReturnsAsync(ContatoMockData.Contato);
-            var sut = new ContatoController(this.contatoRepository.Object, this.contatoValidator);
+            var sut = new ContatoController(this.contatoRepository.Object, this.contatoValidator, this.rabbitMQProdutorService);
 
             var result = await sut.GetById(contatoId);
             Assert.IsType<OkObjectResult>(result);
@@ -54,7 +56,7 @@ namespace TechChallange.Test.Controller
         public async Task CreateContatoAsync_ShouldReturnCreatedAtActionResult()
         {
             var contatoInput = ContatoMockData.ContatoInput();
-            var sut = new ContatoController(this.contatoRepository.Object, this.contatoValidator);
+            var sut = new ContatoController(this.contatoRepository.Object, this.contatoValidator, this.rabbitMQProdutorService);
 
             var result = await sut.Create(contatoInput);
             Assert.IsType<CreatedAtActionResult>(result);
@@ -64,7 +66,7 @@ namespace TechChallange.Test.Controller
         public async Task UpdateContatoAsync_ShouldReturnBadRequestObjectResult()
         {
             var contatoInputUpdate = ContatoMockData.ContatoInputUpdate();
-            var sut = new ContatoController(this.contatoRepository.Object, this.contatoValidator);
+            var sut = new ContatoController(this.contatoRepository.Object, this.contatoValidator, this.rabbitMQProdutorService);
 
             var result = await sut.Update(contatoInputUpdate);
             Assert.IsType<BadRequestObjectResult>(result);
@@ -74,7 +76,7 @@ namespace TechChallange.Test.Controller
         public async Task DeleteContatoAsync_ShouldReturnBadRequestObjectResult()
         {
             var contatoId = 1;
-            var sut = new ContatoController(this.contatoRepository.Object, this.contatoValidator);
+            var sut = new ContatoController(this.contatoRepository.Object, this.contatoValidator, this.rabbitMQProdutorService);
 
             var result = await sut.Delete(contatoId);
             Assert.IsType<BadRequestObjectResult>(result);

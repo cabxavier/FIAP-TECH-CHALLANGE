@@ -4,11 +4,12 @@ using CORE.Repository;
 using CORE.Validator;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using TechChallange.Core.ServiceRabbitMQ;
 
 namespace TECHCHALLANGEAPI.Controllers
 {
     [ApiController]
-    [Route("/[controller]")]
+    [Route("api/[controller]")]
     public class ContatoRegiaoController : ControllerBase
     {
         private readonly IContatoRegiaoRepository contatoRegiaoRepository;
@@ -16,14 +17,18 @@ namespace TECHCHALLANGEAPI.Controllers
         private readonly IRegiaoRepository regiaoRepository;
         private readonly ContatoRegiaoValidator contatoRegiaoValidator;
 
-        public ContatoRegiaoController(IContatoRegiaoRepository contatoRegiaoRepository, IContatoRepository contatoRepository, IRegiaoRepository regiaoRepository, ContatoRegiaoValidator contatoRegiaoValidator)
+        private readonly RabbitMQProdutorService rabbitMQProdutorService;
+
+        public ContatoRegiaoController(IContatoRegiaoRepository contatoRegiaoRepository, IContatoRepository contatoRepository, IRegiaoRepository regiaoRepository,
+            ContatoRegiaoValidator contatoRegiaoValidator, RabbitMQProdutorService rabbitMQProdutorService)
         {
             this.contatoRegiaoRepository = contatoRegiaoRepository;
             this.contatoRepository = contatoRepository;
             this.regiaoRepository = regiaoRepository;
             this.contatoRegiaoValidator = contatoRegiaoValidator;
+            this.rabbitMQProdutorService = rabbitMQProdutorService;
         }
-         
+
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -47,7 +52,7 @@ namespace TECHCHALLANGEAPI.Controllers
         [HttpGet("{Id:int}")]
         public async Task<IActionResult> GetById([FromRoute] int Id)
         {
-            try           
+            try
             {
                 var result = await this.contatoRegiaoRepository.GetContatoRegiaoByIdAsync(Id);
 
@@ -99,7 +104,10 @@ namespace TECHCHALLANGEAPI.Controllers
                     return BadRequest("Já existe contato região cadastrado com o contatoId e regiaoId informados.");
                 }
 
-                await this.contatoRegiaoRepository.AddAsync(contatoRegiao);
+                if (this.rabbitMQProdutorService is not null)
+                {
+                    await this.rabbitMQProdutorService.SendMessage(contatoRegiao, this.rabbitMQProdutorService.configuration.GetSection("RabbitMQ")["NomeFilaContatoRegiao"] ?? string.Empty);
+                }
 
                 return CreatedAtAction(nameof(this.GetById), new { id = contatoRegiao.Id }, ContatoRegiaoInput);
             }
@@ -150,12 +158,23 @@ namespace TECHCHALLANGEAPI.Controllers
                 }
                 else if ((!contatoId.Equals(ContatoRegiaoInputUpdate.ContatoId)) || (!regiaoId.Equals(ContatoRegiaoInputUpdate.RegiaoId)))
                 {
+                    
                     if ((await this.contatoRegiaoRepository.GetByContatoIdAndRegiaoIdAsync(contatoRegiao.ContatoId, contatoRegiao.RegiaoId)) is not null)
                     {
                         return BadRequest("Já existe contato região cadastrado com o contatoId e regiaoId informados.");
                     }
 
-                    await this.contatoRegiaoRepository.UpdateAsync(contatoRegiao);
+                    if (this.rabbitMQProdutorService is not null)
+                    {
+                        var contatoRegiaoAux = new ContatoRegiao()
+                        {
+                            Id = contatoRegiao.Id,
+                            ContatoId = contatoRegiao.ContatoId,
+                            RegiaoId = contatoRegiao.RegiaoId
+                        };
+
+                        await this.rabbitMQProdutorService.SendMessage(contatoRegiaoAux, this.rabbitMQProdutorService.configuration.GetSection("RabbitMQ")["NomeFilaContatoRegiao"] ?? string.Empty);
+                    }
                 }
 
                 return NoContent();
@@ -178,7 +197,10 @@ namespace TECHCHALLANGEAPI.Controllers
                     return BadRequest("Não foi possível obter as informações do contato região.");
                 }
 
-                await this.contatoRegiaoRepository.DeleteAsync(contatoRegiao.Id);
+                if (this.rabbitMQProdutorService is not null)
+                {
+                    await this.rabbitMQProdutorService.SendMessage(contatoRegiao, this.rabbitMQProdutorService.configuration.GetSection("RabbitMQ")["NomeFilaContatoRegiaoDelete"] ?? string.Empty);
+                }
 
                 return NoContent();
             }

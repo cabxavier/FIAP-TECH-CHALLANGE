@@ -4,20 +4,23 @@ using CORE.Repository;
 using CORE.Validator;
 using Microsoft.AspNetCore.Mvc;
 using FluentValidation;
+using TechChallange.Core.ServiceRabbitMQ;
 
 namespace TECHCHALLANGEAPI.Controllers
 {
     [ApiController]
-    [Route("/[controller]")]
+    [Route("api/[controller]")]
     public class ContatoController : ControllerBase
     {
         private readonly IContatoRepository contatoRepository;
         private readonly ContatoValidator contatoValidator;
+        private readonly RabbitMQProdutorService rabbitMQProdutorService;
 
-        public ContatoController(IContatoRepository contatoRepository, ContatoValidator contatoValidator)
+        public ContatoController(IContatoRepository contatoRepository, ContatoValidator contatoValidator, RabbitMQProdutorService rabbitMQProdutorService)
         {
             this.contatoRepository = contatoRepository;
             this.contatoValidator = contatoValidator;
+            this.rabbitMQProdutorService = rabbitMQProdutorService;
         }
 
         [HttpGet]
@@ -40,8 +43,8 @@ namespace TECHCHALLANGEAPI.Controllers
             }
         }
 
-        [HttpGet("{Id:int}")]
-        public async Task<IActionResult> GetById([FromRoute] int Id)
+        [HttpGet("{Id}")]
+        public async Task<IActionResult> GetById(int Id)
         {
             try
             {
@@ -116,7 +119,10 @@ namespace TECHCHALLANGEAPI.Controllers
                     return BadRequest("Já existe contato cadastrado com o nome, telefone e e-mail informado.");
                 }
 
-                await this.contatoRepository.AddAsync(contato);
+                if (this.rabbitMQProdutorService is not null)
+                {
+                    await this.rabbitMQProdutorService.SendMessage(contato, this.rabbitMQProdutorService.configuration.GetSection("RabbitMQ")["NomeFilaContato"] ?? string.Empty);
+                }
 
                 return CreatedAtAction(nameof(this.GetById), new { id = contato.Id }, contato);
             }
@@ -163,7 +169,8 @@ namespace TECHCHALLANGEAPI.Controllers
                     {
                         return BadRequest("Já existe contato cadastrado com o telefone informado.");
                     }
-                }else if (!email.Equals(ContatoInputUpdate.Email))
+                }
+                else if (!email.Equals(ContatoInputUpdate.Email))
                 {
                     if ((await this.contatoRepository.GetByEmailAsync(contato.Email)) is not null)
                     {
@@ -171,7 +178,10 @@ namespace TECHCHALLANGEAPI.Controllers
                     }
                 }
 
-                await this.contatoRepository.UpdateAsync(contato);
+                if (this.rabbitMQProdutorService is not null)
+                {
+                    await this.rabbitMQProdutorService.SendMessage(contato, this.rabbitMQProdutorService.configuration.GetSection("RabbitMQ")["NomeFilaContato"] ?? string.Empty);
+                }
 
                 return NoContent();
             }
@@ -181,7 +191,7 @@ namespace TECHCHALLANGEAPI.Controllers
             }
         }
 
-        [HttpDelete("{Id:int}")]
+        [HttpDelete("{Id}")]
         public async Task<IActionResult> Delete([FromRoute] int Id)
         {
             try
@@ -193,7 +203,10 @@ namespace TECHCHALLANGEAPI.Controllers
                     return BadRequest("Não foi possível obter as informações do contato.");
                 }
 
-                await this.contatoRepository.DeleteAsync(contato.Id);
+                if (this.rabbitMQProdutorService is not null)
+                {
+                    await this.rabbitMQProdutorService.SendMessage(contato, this.rabbitMQProdutorService.configuration.GetSection("RabbitMQ")["NomeFilaContatoDelete"] ?? string.Empty);
+                }
 
                 return NoContent();
             }

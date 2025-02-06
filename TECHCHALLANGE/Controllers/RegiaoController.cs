@@ -4,20 +4,23 @@ using CORE.Repository;
 using CORE.Validator;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using TechChallange.Core.ServiceRabbitMQ;
 
 namespace TECHCHALLANGEAPI.Controllers
 {
     [ApiController]
-    [Route("/[controller]")]
+    [Route("api/[controller]")]
     public class RegiaoController : ControllerBase
     {
         private readonly IRegiaoRepository regiaoRepository;
         private readonly RegiaoValidator regiaoValidator;
+        private readonly RabbitMQProdutorService rabbitMQProdutorService;
 
-        public RegiaoController(IRegiaoRepository regiaoRepository, RegiaoValidator regiaoValidator)
+        public RegiaoController(IRegiaoRepository regiaoRepository, RegiaoValidator regiaoValidator, RabbitMQProdutorService rabbitMQProdutorService)
         {
             this.regiaoRepository = regiaoRepository;
             this.regiaoValidator = regiaoValidator;
+            this.rabbitMQProdutorService = rabbitMQProdutorService;
         }
 
         [HttpGet]
@@ -86,7 +89,10 @@ namespace TECHCHALLANGEAPI.Controllers
                     return BadRequest("Já existe região cadastrado com o ddd informado.");
                 }
 
-                await this.regiaoRepository.AddAsync(regiao);
+                if (this.rabbitMQProdutorService is not null)
+                {
+                    await this.rabbitMQProdutorService.SendMessage(regiao, this.rabbitMQProdutorService.configuration.GetSection("RabbitMQ")["NomeFilaRegiao"] ?? string.Empty);
+                }
 
                 return CreatedAtAction(nameof(this.GetById), new { id = regiao.Id }, regiao);
             }
@@ -125,12 +131,16 @@ namespace TECHCHALLANGEAPI.Controllers
                 }
                 else if (!ddd.Equals(RegiaoInputUpdate.Ddd))
                 {
+                    
                     if ((await this.regiaoRepository.GetByDddAsync(regiao.Ddd)) is not null)
                     {
                         return BadRequest("Já existe região cadastrado com o ddd informado.");
                     }
 
-                    await this.regiaoRepository.UpdateAsync(regiao);
+                    if (this.rabbitMQProdutorService is not null)
+                    {
+                        await this.rabbitMQProdutorService.SendMessage(regiao, this.rabbitMQProdutorService.configuration.GetSection("RabbitMQ")["NomeFilaRegiao"] ?? string.Empty);
+                    }
                 }
 
                 return NoContent();
@@ -153,7 +163,10 @@ namespace TECHCHALLANGEAPI.Controllers
                     return BadRequest("Não foi possível obter as informações da região.");
                 }
 
-                await this.regiaoRepository.DeleteAsync(regiao.Id);
+                if (this.rabbitMQProdutorService is not null)
+                {
+                    await this.rabbitMQProdutorService.SendMessage(regiao, this.rabbitMQProdutorService.configuration.GetSection("RabbitMQ")["NomeFilaRegiaoDelete"] ?? string.Empty);
+                }
 
                 return NoContent();
             }

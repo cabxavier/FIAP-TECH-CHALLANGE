@@ -1,40 +1,72 @@
 services:
   techchallangeapi:
     image: fiap-tech-tech-challange
+    container_name: fiap-tech-tech-challange
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "5000:80"        # Expondo a porta 80 no contêiner para a 5000 no host
+      - "5000:5000"
     environment:
-      - ASPNETCORE_URLS=http://+:80
+      - ASPNETCORE_URLS=http://+:5000
     stdin_open: true    # Permite interação com o contêiner (modo interativo)
     tty: true           # Terminal interativo
     networks:
       - monitoring
 
+  ocelotgatewayapi:
+    image: ocelot-gateway
+    container_name: ocelot-gateway
+    build:
+      context: ./OcelotGateway
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "5001:5001"
+    environment:
+      - ASPNETCORE_URLS=http://+:5001
+    depends_on:
+      - techchallangeapi
+    networks:
+      - monitoring
+      
+  rabbitmq:
+    image: rabbitmq
+    container_name: rabbitmq
+    build:
+      context: ./rabbitmq
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "5672:5672"   # Porta padrão do RabbitMQ
+      - "15672:15672" # Porta do painel de administração do RabbitMQ
+    depends_on:
+      - techchallangeapi
+    networks: 
+      - monitoring
+
   prometheus:
+    image: prometheus
+    container_name: prometheus
     build:
       context: ./prometheus
       dockerfile: Dockerfile
-      args:
-        version: 1
-    image: prometheus
     restart: always
     ports: 
       - 9090:9090
+    depends_on:
+      - techchallangeapi
     networks:
       - monitoring
     volumes: 
       - './prometheus/data:/data'
 
   grafana:
+    image: grafana
+    container_name: grafana
     build:
       context: ./grafana
       dockerfile: Dockerfile
-      args:
-        version: 1
-    image: grafana
     restart: always
     ports:
       - 3000:3000
