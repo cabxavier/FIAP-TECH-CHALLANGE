@@ -74,8 +74,6 @@ builder.Services.AddMassTransit((x =>
             h.Password(senha);
         });
 
-        cfg.Publish<Contato>(p => p.ExchangeType = "direct");
-
         cfg.ReceiveEndpoint(filaContato, e =>
         {
             e.ConfigureConsumer<ContatoCriadoConsumidor>(context);
