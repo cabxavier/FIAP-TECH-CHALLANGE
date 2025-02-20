@@ -58,7 +58,7 @@ builder.Services.AddMassTransit((x =>
 {
     x.AddConsumer<ContatoCriadoConsumidor>();
     x.AddConsumer<ContatoDeleteConsumidor>();
-    x.AddConsumer<ContatoDeadLetter>();
+    //x.AddConsumer<ContatoDeadLetter>();
     x.AddConsumer<RegiaoCriadoConsumidor>();
     x.AddConsumer<RegiaoDeleteConsumidor>();
     x.AddConsumer<RegiaoDeadLetter>();
@@ -74,6 +74,10 @@ builder.Services.AddMassTransit((x =>
             h.Password(senha);
         });
 
+        cfg.Publish<Contato>(p => p.ExchangeType = "direct");
+        cfg.Publish<Regiao>(p => p.ExchangeType = "direct");
+        cfg.Publish<ContatoRegiao>(p => p.ExchangeType = "direct");
+
         cfg.ReceiveEndpoint(filaContato, e =>
         {
             e.ConfigureConsumer<ContatoCriadoConsumidor>(context);
@@ -84,10 +88,10 @@ builder.Services.AddMassTransit((x =>
             e.ConfigureConsumer<ContatoDeleteConsumidor>(context);
         });
 
-        cfg.ReceiveEndpoint($"{filaContato}_error", e =>
-        {
-            e.ConfigureConsumer<ContatoDeadLetter>(context);
-        });
+        //cfg.ReceiveEndpoint($"{filaContato}_error", e =>
+        //{
+        //    e.ConfigureConsumer<ContatoDeadLetter>(context);
+        //});
 
         cfg.ReceiveEndpoint(filaRegiao, e =>
         {

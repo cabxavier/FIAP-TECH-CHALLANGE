@@ -23,6 +23,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "5.Gateway", "5.Gateway", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OcelotGateway", "OcelotGateway\OcelotGateway.csproj", "{41566966-C40C-49FF-A277-EAD14B4C6217}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "6.AzureFunction", "6.AzureFunction", "{63C27D65-6AF2-40DF-839E-10B6782648E4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureFunction", "AzureFunction\AzureFunction.csproj", "{A2CA3887-539F-4EB1-8FF9-DA3ADE31CAEE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +53,10 @@ Global
 		{41566966-C40C-49FF-A277-EAD14B4C6217}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41566966-C40C-49FF-A277-EAD14B4C6217}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41566966-C40C-49FF-A277-EAD14B4C6217}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2CA3887-539F-4EB1-8FF9-DA3ADE31CAEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2CA3887-539F-4EB1-8FF9-DA3ADE31CAEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2CA3887-539F-4EB1-8FF9-DA3ADE31CAEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2CA3887-539F-4EB1-8FF9-DA3ADE31CAEE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -59,6 +67,7 @@ Global
 		{EA6E2725-EAD1-433C-AE7F-2BC8A8EAE996} = {60FB0936-88FA-447F-91C8-C595EAECBF25}
 		{203BE477-F4DA-4204-B7EE-AD02BA74DAF3} = {908EA594-B12C-407E-9688-491B393F4FE0}
 		{41566966-C40C-49FF-A277-EAD14B4C6217} = {F4A9C6A4-A791-4B53-ADFD-04609F53A0D6}
+		{A2CA3887-539F-4EB1-8FF9-DA3ADE31CAEE} = {63C27D65-6AF2-40DF-839E-10B6782648E4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1EBDE57B-0C41-4B69-BAF3-627628DB7C00}

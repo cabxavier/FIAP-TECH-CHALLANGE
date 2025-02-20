@@ -75,6 +75,41 @@ services:
     networks: 
       - monitoring
 
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    container_name: azurite-storage
+    ports:
+      - "10000:10000"
+      - "10001:10001"
+      - "10002:10002"
+
+  azurefunction:
+    image: azure-function
+    container_name: azure-function
+    build:
+      context: ./AzureFunction
+      dockerfile: Dockerfile
+    ports:
+      - "7071:80"
+    environment:
+      - RabbitMQConnection=amqp://guest:guest@rabbitmq:5672/
+      - WEBSITES_INCLUDE_CLOUD_CERTS=true
+      - AzureWebJobsStorage=UseDevelopmentStorage=true
+      - FUNCTIONS_WORKER_RUNTIME=dotnet-isolated
+      - FUNCTIONS_EXTENSION_VERSION=~4
+      - Grpc__ChannelOptions__HttpHandlerType=HttpClientHandler
+      - Grpc__ChannelOptions__HttpClientType=HttpClient
+      - Grpc__ChannelOptions__MaxReceiveMessageSize=4194304
+      - Grpc__ChannelOptions__MaxSendMessageSize=4194304
+    depends_on:
+      - techchallangeapi
+      - ocelotgatewayapi
+      - grafana
+      - rabbitmq
+      - azurite
+    networks:
+      - monitoring
+
 networks:
   monitoring:
     driver: bridge
