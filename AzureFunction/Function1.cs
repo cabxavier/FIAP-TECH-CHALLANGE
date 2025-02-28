@@ -13,7 +13,7 @@ namespace AzureFunction
         }
 
         [Function("Function1")]
-        public void Run([RabbitMQTrigger("filacontato_error", ConnectionStringSetting = "RabbitMQConnection")] string myQueueItem)
+        public void Run([RabbitMQTrigger("filaRegiao_error", ConnectionStringSetting = "RabbitMQConnection")] string myQueueItem)
         {
             _logger.LogInformation($"C# Queue trigger function processed: {myQueueItem}");
         }

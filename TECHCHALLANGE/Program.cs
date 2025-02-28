@@ -58,10 +58,10 @@ builder.Services.AddMassTransit((x =>
 {
     x.AddConsumer<ContatoCriadoConsumidor>();
     x.AddConsumer<ContatoDeleteConsumidor>();
-    //x.AddConsumer<ContatoDeadLetter>();
+    x.AddConsumer<ContatoDeadLetter>();
     x.AddConsumer<RegiaoCriadoConsumidor>();
     x.AddConsumer<RegiaoDeleteConsumidor>();
-    x.AddConsumer<RegiaoDeadLetter>();
+    //x.AddConsumer<RegiaoDeadLetter>();
     x.AddConsumer<ContatoRegiaoCriadoConsumidor>();
     x.AddConsumer<ContatoRegiaoDeleteConsumidor>();
     x.AddConsumer<ContatoRegiaoDeadLetter>();
@@ -88,10 +88,10 @@ builder.Services.AddMassTransit((x =>
             e.ConfigureConsumer<ContatoDeleteConsumidor>(context);
         });
 
-        //cfg.ReceiveEndpoint($"{filaContato}_error", e =>
-        //{
-        //    e.ConfigureConsumer<ContatoDeadLetter>(context);
-        //});
+        cfg.ReceiveEndpoint($"{filaContato}_error", e =>
+        {
+            e.ConfigureConsumer<ContatoDeadLetter>(context);
+        });
 
         cfg.ReceiveEndpoint(filaRegiao, e =>
         {
@@ -103,10 +103,10 @@ builder.Services.AddMassTransit((x =>
             e.ConfigureConsumer<RegiaoDeleteConsumidor>(context);
         });
 
-        cfg.ReceiveEndpoint($"{filaRegiao}_error", e =>
+        /*cfg.ReceiveEndpoint($"{filaRegiao}_error", e =>
         {
             e.ConfigureConsumer<RegiaoDeadLetter>(context);
-        });
+        });*/
 
         cfg.ReceiveEndpoint(filaContatoRegiao, e =>
         {

@@ -17,6 +17,8 @@ namespace TechChallange.Core.ServiceRabbitMQ
         {
             try
             {
+                throw new Exception("DEU RUIM");
+
                 var rotulo = string.Empty;
 
                 if (context is null)
