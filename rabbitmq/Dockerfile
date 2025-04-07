@@ -1,3 +1,3 @@
-FROM rabbitmq:3-management as image-rabbitmq-management
+FROM rabbitmq:3-management AS image-rabbitmq-management
 
 EXPOSE 15672
