@@ -1,12 +1,9 @@
-# Definindo o nomdo do workflow
 name: Test and Deploy Workflow
 
-# Definindo quando o workflow será disparado
 on:
   push:
     branches: [ main ]
 
-# Definindo os jobs que o workflow executará
 jobs:
   test_jobs:
     name: Executando job de teste
@@ -43,12 +40,12 @@ jobs:
 
     - name: Check docker compose
       run: |
-            curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-            chmod +x /usr/local/bin/docker-compose
+        curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+        chmod +x /usr/local/bin/docker-compose
 
     - name: Build and start Docker Compose
       run: |
-          docker-compose up --build -d
+        docker-compose up --build -d
     
     - name: Build and push Docker images
       uses: docker/build-push-action@v6.9.0
@@ -73,8 +70,30 @@ jobs:
       - name: Configure Kubernetes
         run: |
           mkdir -p ~/.kube
-          echo "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
+          cat > ~/.kube/config <<EOF
+          apiVersion: v1
+          kind: Config
+          clusters:
+          - cluster:
+              certificate-authority-data: ${{ secrets.KUBE_CERT }}
+              server: ${{ secrets.KUBE_SERVER }}
+            name: k8s-cluster
+          contexts:
+          - context:
+              cluster: k8s-cluster
+              user: github-actions-user
+              namespace: tech-challenge
+            name: k8s-context
+          current-context: k8s-context
+          users:
+          - name: github-actions-user
+            user:
+              token: ${{ secrets.KUBE_TOKEN }}
+          EOF
           chmod 600 ~/.kube/config
+          
+          # Verifica a conexão
+          kubectl cluster-info
 
       - name: Deploy Kubernetes manifests
         run: |
