@@ -1,60 +1,56 @@
-# Definindo o nomdo do workflow
 name: Test and Deploy Workflow
 
-# Definindo quando o workflow será disparado
 on:
   push:
     branches: [ main ]
 
-# Definindo os jobs que o workflow executará
 jobs:
   test_jobs:
-    name: Executando job de teste
+    name: Execute Test Job
     runs-on: ubuntu-latest
     steps:
-    - name: Step 1
-      uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v4
 
     - name: Setup .NET
-      uses: actions/setup-dotnet@v4.1.0
+      uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 8.x
+        dotnet-version: '8.x'
 
-    - name: Restore Dependencies
+    - name: Restore dependencies
       run: dotnet restore
 
-    - name: Build Solution
+    - name: Build solution
       run: dotnet build --no-restore
 
-    - name: Run Tests
+    - name: Run tests
       run: dotnet test --no-build --logger "trx;LogFileName=test-results.trx"
 
-    - name: Publish Test Results
+    - name: Publish test results
       uses: actions/upload-artifact@v4
       with:
         name: Test-Results
         path: '**/test-results.trx'
 
     - name: Docker Login
-      uses: docker/login-action@v3.3.0
+      uses: docker/login-action@v3
       with:
         username: 'cabxavier'
         password: ${{ secrets.DOCKERHUB_FIAP_TECHCHALLANGE_PASSWORD }}
 
-    - name: Check docker compose
+    - name: Install Docker Compose
       run: |
-            curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-            chmod +x /usr/local/bin/docker-compose
+        curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+        chmod +x /usr/local/bin/docker-compose
 
-    - name: Build and start Docker Compose
-      run: |
-          docker-compose up --build -d
-    
-    - name: Build and push Docker images
-      uses: docker/build-push-action@v6.9.0
+    - name: Build and start containers
+      run: docker-compose up --build -d
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
       with:       
         context: .
-        tags: 'cabxavier/fiap-techchallange:latest'
+        tags: cabxavier/fiap-techchallange:latest
         push: true
 
   deploy_to_kubernetes:
@@ -63,20 +59,37 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+
+      - name: Verify k8s directory exists
+        run: |
+          if [ ! -d "k8s" ]; then
+            echo "::error::k8s directory not found"
+            exit 1
+          fi
 
       - name: Install kubectl
         uses: azure/setup-kubectl@v3
         with:
           version: 'latest'
 
-      - name: Configure Kubernetes
+      - name: Configure Kubernetes access
         run: |
           mkdir -p ~/.kube
           echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > ~/.kube/config
           chmod 600 ~/.kube/config
 
-      - name: Deploy Kubernetes manifests
+      - name: Validate Kubernetes manifests
+        run: |
+          for manifest in k8s/*.yaml; do
+            if [ ! -f "$manifest" ]; then
+              echo "::error::Missing manifest file: $manifest"
+              exit 1
+            fi
+            kubectl apply --dry-run=client -f "$manifest" || exit 1
+          done
+
+      - name: Apply Kubernetes manifests
         run: |
           kubectl apply -f k8s/namespace.yaml
           kubectl apply -f k8s/rabbitmq-deployment.yaml
@@ -89,6 +102,13 @@ jobs:
 
       - name: Verify deployments
         run: |
+          echo "Current deployments:"
           kubectl get deployments -n tech-challenge
-          kubectl get pods -n tech-challenge
+          echo -e "\nCurrent pods:"
+          kubectl get pods -n tech-challenge -w=200ms
+          echo -e "\nCurrent services:"
           kubectl get services -n tech-challenge
+
+      - name: Health check
+        run: |
+          kubectl wait --for=condition=available --timeout=300s deployment -n tech-challenge --all
