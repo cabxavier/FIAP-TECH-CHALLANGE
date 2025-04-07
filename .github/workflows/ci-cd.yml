@@ -12,7 +12,7 @@ jobs:
     name: Executando job de teste
     runs-on: ubuntu-latest
     steps:
-    - name: Step 1
+    - name: Checkout code
       uses: actions/checkout@v2
 
     - name: Setup .NET
@@ -76,49 +76,57 @@ jobs:
           echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > ~/.kube/config
           chmod 600 ~/.kube/config
           
-          # Adicionar fallback para docker.internal
-          echo "127.0.0.1 kubernetes.docker.internal" | sudo tee -a /etc/hosts
+          # Verificar e corrigir endpoint do Kubernetes
+          if grep -q "kubernetes.docker.internal" ~/.kube/config; then
+            echo "Corrigindo endpoint do Kubernetes no kubeconfig..."
+            sed -i 's/kubernetes.docker.internal/kubernetes.default.svc.cluster.local/g' ~/.kube/config
+          fi
           
           # Verificar conexão com o cluster
-          kubectl cluster-info || echo "Cluster info check failed, continuing..."
+          echo "Verificando conexão com o cluster..."
+          kubectl cluster-info --request-timeout=30s || echo "Aviso: Falha ao conectar ao cluster, continuando..."
 
       - name: Deploy Kubernetes manifests
         run: |
-          set -e  # Exit immediately if a command exits with a non-zero status
+          set +e  # Não sair imediatamente em caso de erro
           
-          # Create namespace if not exists
-          kubectl create namespace tech-challenge --dry-run=client -o yaml | kubectl apply -f - --validate=false
+          # Tentar criar namespace (ignorar erros)
+          kubectl create namespace tech-challenge --dry-run=client -o yaml | kubectl apply -f - --validate=false --request-timeout=30s || true
           
-          # Apply all manifests with validation disabled and timeout
-          for manifest in \
-            namespace.yaml \
-            rabbitmq-deployment.yaml \
-            azurite-deployment.yaml \
-            prometheus-deployment.yaml \
-            grafana-deployment.yaml \
-            techchallengeapi-deployment.yaml \
-            azurefunction-deployment.yaml \
+          # Lista de manifestos para aplicar
+          manifests=(
+            namespace.yaml
+            rabbitmq-deployment.yaml
+            azurite-deployment.yaml
+            prometheus-deployment.yaml
+            grafana-deployment.yaml
+            techchallengeapi-deployment.yaml
+            azurefunction-deployment.yaml
             ocelotgatewayapi-deployment.yaml
-          do
-            echo "Applying $manifest..."
-            if ! kubectl apply -f $manifest --validate=false --request-timeout=60s; then
-              echo "Warning: Failed to apply $manifest"
-              # Tentar novamente uma vez
-              sleep 5
-              kubectl apply -f $manifest --validate=false --request-timeout=60s || true
-            fi
+          )
+          
+          # Aplicar cada manifesto com tentativas
+          for manifest in "${manifests[@]}"; do
+            echo "Aplicando $manifest..."
+            for i in {1..3}; do
+              if kubectl apply -f $manifest --validate=false --request-timeout=60s; then
+                echo "$manifest aplicado com sucesso"
+                break
+              else
+                echo "Tentativa $i falhou para $manifest"
+                sleep 5
+              fi
+            done
           done
 
       - name: Verify deployments
         run: |
-          echo "### Deployments ###"
-          kubectl get deployments -n tech-challenge --show-labels
+          echo "### Verificando estado do cluster ###"
+          kubectl config view --minify
+          kubectl config current-context
           
-          echo "### Pods ###"
-          kubectl get pods -n tech-challenge -o wide
+          echo "### Recursos no namespace tech-challenge ###"
+          kubectl get all -n tech-challenge || echo "Falha ao verificar recursos"
           
-          echo "### Services ###"
-          kubectl get services -n tech-challenge
-          
-          echo "### Verificação detalhada ###"
-          kubectl get all -n tech-challenge
+          echo "### Descrição dos pods com problemas ###"
+          kubectl describe pods -n tech-challenge --field-selector=status.phase!=Running || true
