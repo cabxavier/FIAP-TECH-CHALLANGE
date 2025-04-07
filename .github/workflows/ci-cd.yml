@@ -1,77 +1,74 @@
-name: CI/CD Pipeline
+# Definindo o nomdo do workflow
+name: Test and Deploy Workflow
 
+# Definindo quando o workflow será disparado
 on:
   push:
-    branches: [main]
+    branches: [ main ]
 
+# Definindo os jobs que o workflow executará
 jobs:
-  build_and_test:
-    name: Build and Test
+  test_jobs:
+    name: Executando job de teste
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - name: Step 1
+      uses: actions/checkout@v2
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.x'
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4.1.0
+      with:
+        dotnet-version: 8.x
 
-      - name: Restore dependencies
-        run: dotnet restore
+    - name: Restore Dependencies
+      run: dotnet restore
 
-      - name: Build solution
-        run: dotnet build --no-restore
+    - name: Build Solution
+      run: dotnet build --no-restore
 
-      - name: Run tests
-        run: dotnet test --no-build --logger "trx;LogFileName=test-results.trx"
+    - name: Run Tests
+      run: dotnet test --no-build --logger "trx;LogFileName=test-results.trx"
 
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results
-          path: '**/test-results.trx'
+    - name: Publish Test Results
+      uses: actions/upload-artifact@v3
+      with:
+        name: Test-Results
+        path: '**/test-results.trx'
 
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3.3.0
-        with:
-          username: 'cabxavier'
-          password: ${{ secrets.DOCKERHUB_FIAP_TECHCHALLANGE_PASSWORD }}
+    - name: Docker Login
+      uses: docker/login-action@v3.3.0
+      with:
+        username: 'cabxavier'
+        password: ${{ secrets.DOCKERHUB_FIAP_TECHCHALLANGE_PASSWORD }}
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: cabxavier/fiap-techchallange:latest
+    - name: Check docker compose
+      run: |
+            curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+            chmod +x /usr/local/bin/docker-compose
 
-  deploy:
+    - name: Build and start Docker Compose
+      run: |
+          docker-compose up --build -d
+    
+    - name: Build and push Docker images
+      uses: docker/build-push-action@v6.9.0
+      with:       
+        context: .
+        tags: 'cabxavier/fiap-techchallange:latest'
+        push: true
+
+  deploy_to_kubernetes:
     name: Deploy to Kubernetes
-    needs: build_and_test
+    needs: test_jobs
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Verify Kubernetes manifests
-        run: |
-          if [ ! -d "k8s" ]; then
-            echo "::error::Directory 'k8s' not found"
-            echo "Please create a 'k8s' directory with your manifests"
-            exit 1
-          fi
-          
-          if [ ! -f "k8s/namespace.yaml" ]; then
-            echo "::error::namespace.yaml not found in k8s directory"
-            exit 1
-          fi
-          
-          echo "Found the following manifests:"
-          ls -la k8s/
+        uses: actions/checkout@v2
 
       - name: Install kubectl
         uses: azure/setup-kubectl@v3
-        id: install
+        with:
+          version: 'latest'
 
       - name: Configure Kubernetes
         run: |
@@ -79,19 +76,19 @@ jobs:
           echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > ~/.kube/config
           chmod 600 ~/.kube/config
 
-      - name: Apply manifests
+      - name: Deploy Kubernetes manifests
         run: |
-          echo "Applying Kubernetes manifests..."
-          kubectl apply -f k8s/ --recursive
-          
-          echo "Current cluster state:"
-          kubectl get all -n tech-challenge
+          kubectl apply -f namespace.yaml
+          kubectl apply -f rabbitmq-deployment.yaml
+          kubectl apply -f azurite-deployment.yaml
+          kubectl apply -f prometheus-deployment.yaml
+          kubectl apply -f grafana-deployment.yaml
+          kubectl apply -f techchallengeapi-deployment.yaml
+          kubectl apply -f azurefunction-deployment.yaml
+          kubectl apply -f ocelotgatewayapi-deployment.yaml
 
-      - name: Verify deployment
+      - name: Verify deployments
         run: |
-          echo "Waiting for deployments to be ready..."
-          kubectl wait --for=condition=available --timeout=300s deployment --all -n tech-challenge
-          
-          echo "Final status:"
+          kubectl get deployments -n tech-challenge
           kubectl get pods -n tech-challenge
-          kubectl get svc -n tech-challenge
+          kubectl get services -n tech-challenge
