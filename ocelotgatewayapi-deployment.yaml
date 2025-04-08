@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: ocelotgatewayapi
-        image: cabxavier/ocelot-gateway
+        image: cabxavier/ocelot-gateway-api
         ports:
         - containerPort: 5001
         env:
