@@ -1,12 +1,9 @@
-# Definindo o nome do workflow
 name: Test and Deploy Workflow
 
-# Definindo quando o workflow será disparado
 on:
   push:
     branches: [ main ]
 
-# Definindo os jobs que o workflow executará
 jobs:
   test_jobs:
     name: Executando job de teste
@@ -65,68 +62,52 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install kubectl
-        uses: azure/setup-kubectl@v3
-        with:
-          version: 'latest'
-
-      - name: Configure Kubernetes
+      - name: Install kubectl and kind
         run: |
-          mkdir -p ~/.kube
-          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > ~/.kube/config
-          chmod 600 ~/.kube/config
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          chmod +x kubectl
+          sudo mv kubectl /usr/local/bin/
           
-          # Verificar e corrigir endpoint do Kubernetes
-          if grep -q "kubernetes.docker.internal" ~/.kube/config; then
-            echo "Corrigindo endpoint do Kubernetes no kubeconfig..."
-            sed -i 's/kubernetes.docker.internal/kubernetes.default.svc.cluster.local/g' ~/.kube/config
-          fi
+          curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
+          chmod +x ./kind
+          sudo mv ./kind /usr/local/bin/kind
+
+      - name: Create Kind cluster
+        run: |
+          cat <<EOF > kind-config.yaml
+          kind: Cluster
+          apiVersion: kind.x-k8s.io/v1alpha4
+          nodes:
+          - role: control-plane
+            extraPortMappings:
+            - containerPort: 30003
+              hostPort: 30003
+              protocol: TCP
+          EOF
           
-          # Verificar conexão com o cluster
-          echo "Verificando conexão com o cluster..."
-          kubectl cluster-info --request-timeout=30s || echo "Aviso: Falha ao conectar ao cluster, continuando..."
+          kind create cluster --config kind-config.yaml
+          kubectl cluster-info
+
+      - name: Create namespace
+        run: kubectl create namespace tech-challenge || true
 
       - name: Deploy Kubernetes manifests
         run: |
-          set +e  # Não sair imediatamente em caso de erro
-          
-          # Tentar criar namespace (ignorar erros)
-          kubectl create namespace tech-challenge --dry-run=client -o yaml | kubectl apply -f - --validate=false --request-timeout=30s || true
-          
-          # Lista de manifestos para aplicar
-          manifests=(
-            namespace.yaml
-            rabbitmq-deployment.yaml
-            azurite-deployment.yaml
-            prometheus-deployment.yaml
-            grafana-deployment.yaml
-            techchallengeapi-deployment.yaml
-            azurefunction-deployment.yaml
-            ocelotgatewayapi-deployment.yaml
-          )
-          
-          # Aplicar cada manifesto com tentativas
-          for manifest in "${manifests[@]}"; do
-            echo "Aplicando $manifest..."
-            for i in {1..3}; do
-              if kubectl apply -f $manifest --validate=false --request-timeout=60s; then
-                echo "$manifest aplicado com sucesso"
-                break
-              else
-                echo "Tentativa $i falhou para $manifest"
-                sleep 5
-              fi
-            done
-          done
+          kubectl apply -f ocelotgatewayapi-deployment.yaml
+          kubectl apply -f rabbitmq-deployment.yaml
+          kubectl apply -f azurite-deployment.yaml
+          kubectl apply -f prometheus-deployment.yaml
+          kubectl apply -f grafana-deployment.yaml
+          kubectl apply -f techchallengeapi-deployment.yaml
+          kubectl apply -f azurefunction-deployment.yaml
 
       - name: Verify deployments
         run: |
-          echo "### Verificando estado do cluster ###"
-          kubectl config view --minify
-          kubectl config current-context
+          echo "### Cluster status ###"
+          kubectl get nodes
           
-          echo "### Recursos no namespace tech-challenge ###"
-          kubectl get all -n tech-challenge || echo "Falha ao verificar recursos"
+          echo "### Resources in tech-challenge namespace ###"
+          kubectl get all -n tech-challenge
           
-          echo "### Descrição dos pods com problemas ###"
-          kubectl describe pods -n tech-challenge --field-selector=status.phase!=Running || true
+          echo "### Pods details ###"
+          kubectl describe pods -n tech-challenge
